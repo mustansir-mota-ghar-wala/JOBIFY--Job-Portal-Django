@@ -1,0 +1,148 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #ffffff, #e9f2ff);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card h2,
+.dashboard-card h4 {
+    font-weight: 700;
+}
+
+.empty-state-card {
+    border: 2px dashed #d0d7de;
+    background-color: #ffffff;
+}
+
+.btn {
+    border-radius: 10px;
+}
+
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 4px;
+}
+
+.job-card {
+    height: 100%;
+}
+
+.pagination-wrapper {
+    clear: both;
+    position: relative;
+    z-index: 1;
+}
+
+.row.mb-5 {
+    margin-bottom: 3rem !important;
+}
+
+/* Hero branding */
+.hero-main-title {
+    line-height: 1.05;
+    margin-bottom: 1rem;
+}
+
+.hero-light-text {
+    display: block;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #495057;
+    letter-spacing: 0.5px;
+}
+
+.brand-highlight {
+    display: inline-block;
+    font-size: 5.2rem;
+    font-weight: 900;
+    color: #0d6efd;
+    letter-spacing: -2px;
+    text-shadow: 0 10px 25px rgba(13, 110, 253, 0.22);
+}
+
+.hero-section .lead {
+    color: #495057;
+    max-width: 720px;
+}
+
+.hero-section .btn-lg {
+    padding: 0.75rem 1.5rem;
+}
+
+/* Standout section heading */
+.section-heading {
+    font-weight: 800;
+    color: #212529;
+}
+
+/* Better text inside cards */
+.card h4,
+.card h5 {
+    font-weight: 700;
+    color: #212529;
+}
+
+.card p {
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .brand-highlight {
+        font-size: 4.3rem;
+    }
+
+    .hero-light-text {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .navbar-brand {
+        font-size: 1.35rem;
+    }
+
+    .hero-light-text {
+        font-size: 1.4rem;
+    }
+
+    .brand-highlight {
+        font-size: 3.2rem;
+        letter-spacing: -1px;
+    }
+
+    .hero-section {
+        padding: 2rem !important;
+    }
+}

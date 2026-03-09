@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">My Saved Jobs</h2>
+    <a href="{% url 'job_list' %}" class="btn btn-primary">Browse More Jobs</a>
+</div>
+
+<div class="row">
+    {% for saved_job in saved_jobs %}
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4 h-100">
+                <div class="card-body">
+                    <h4>{{ saved_job.job.title }}</h4>
+                    <p class="text-muted">{{ saved_job.job.location }} | {{ saved_job.job.get_job_type_display }}</p>
+
+                    {% if saved_job.job.category %}
+                        <p><strong>Category:</strong> {{ saved_job.job.category.name }}</p>
+                    {% endif %}
+
+                    <p>{{ saved_job.job.description|truncatewords:20 }}</p>
+
+                    {% if saved_job.job.salary %}
+                        <p><strong>Salary:</strong> {{ saved_job.job.salary }}</p>
+                    {% endif %}
+
+                    <a href="{% url 'job_detail' saved_job.job.id %}" class="btn btn-primary">View Job</a>
+                    <a href="{% url 'unsave_job' saved_job.job.id %}" class="btn btn-danger">Remove</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="card shadow-sm empty-state-card">
+                <div class="card-body text-center py-5">
+                    <h4>No saved jobs yet</h4>
+                    <p class="text-muted">Save jobs you like and they will appear here.</p>
+                    <a href="{% url 'job_list' %}" class="btn btn-primary">Explore Jobs</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center mt-4">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

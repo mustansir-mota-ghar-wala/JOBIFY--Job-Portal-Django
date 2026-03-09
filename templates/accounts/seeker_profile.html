@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>{{ profile.user }}</h2>
+            <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">Edit Profile</a>
+        </div>
+
+        {% if profile.profile_image %}
+            <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="img-thumbnail mb-3" width="150">
+        {% endif %}
+
+        <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
+        <p><strong>Skills:</strong> {{ profile.skills|default:"Not added yet" }}</p>
+        <p><strong>Education:</strong> {{ profile.education|default:"Not added yet" }}</p>
+        <p><strong>Experience:</strong> {{ profile.experience|default:"Not added yet" }}</p>
+
+        <p>
+            <strong>Resume:</strong>
+            {% if profile.resume %}
+                <a href="{{ profile.resume.url }}" target="_blank">View Resume</a>
+            {% else %}
+                Not uploaded yet
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endblock %}

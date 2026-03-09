@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="fw-bold mb-4">My Applications</h2>
+
+<div class="row g-4">
+    {% for application in applications %}
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>{{ application.job.title }}</h4>
+                    <p class="text-muted">{{ application.job.location }}</p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        {% if application.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% elif application.status == 'reviewed' %}
+                            <span class="badge bg-info">Reviewed</span>
+                        {% elif application.status == 'shortlisted' %}
+                            <span class="badge bg-success">Shortlisted</span>
+                        {% elif application.status == 'rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% endif %}
+                    </p>
+
+                    <p><strong>Applied At:</strong> {{ application.applied_at }}</p>
+                    <a href="{% url 'job_detail' application.job.id %}" class="btn btn-primary">View Job</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <h4>No applications yet</h4>
+                    <p class="text-muted">Start applying to jobs and track them here.</p>
+                    <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center mt-4">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
