@@ -1,79 +1,90 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.pyc
 *$py.class
 
-# Virtual environment
-my_virtual_environment/
+# =========================
+# Virtual Environments
+# =========================
 venv/
-.env
+env/
+my_virtual_environment/
+.venv/
 
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+
+# =========================
 # Django
+# =========================
 *.log
-local_settings.py
 db.sqlite3
 media/
 staticfiles/
 
-# IDEs
+# =========================
+# Django Migrations (optional)
+# =========================
+# Comment this if you want migrations in repo
+# */migrations/*
+# !*/migrations/__init__.py
+
+# =========================
+# Static build files
+# =========================
+staticfiles/
+
+# =========================
+# IDE / Editor
+# =========================
 .vscode/
 .idea/
 
-# Byte-compiled / optimized / DLL files
-*.pyc
-*.pyo
-*.pyd
-
-# Distribution / packaging
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# macOS
+# =========================
+# OS files
+# =========================
 .DS_Store
+Thumbs.db
 
-# logs
-*.log
+# =========================
+# Build / packaging
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
 
-# coverage
+# =========================
+# Test / coverage
+# =========================
 htmlcov/
 .coverage
 .coverage.*
 .cache
 nosetests.xml
 coverage.xml
-*,cover
 
-# pyenv
+# =========================
+# PyInstaller
+# =========================
+*.manifest
+*.spec
+
+# =========================
+# Python version managers
+# =========================
 .python-version
 
-# pipenv
+# =========================
+# Dependency managers
+# =========================
 Pipfile.lock
-
-# poetry
 poetry.lock
-
-# celery beat schedule file
-celerybeat-schedule
-
-# envs
-.env
-.env.*
-
