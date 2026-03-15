@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from apps.jobs.models import Job
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 
 class Application(models.Model):
@@ -22,7 +23,10 @@ class Application(models.Model):
         related_name='applications'
     )
     cover_letter = models.TextField(blank=True, null=True)
-    resume = models.FileField(upload_to='application_resumes/')
+    resume = models.FileField(
+        upload_to='application_resumes/',
+        storage=RawMediaCloudinaryStorage()
+    )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     applied_at = models.DateTimeField(auto_now_add=True)
 
