@@ -1,6 +1,12 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.conf import settings
 from apps.jobs.models import Job
+
+try:
+    import cloudinary_storage.storage
+except ImportError:  # pragma: no cover - local fallback when optional dependency is missing
+    cloudinary_storage = None
 
 
 class Application(models.Model):
@@ -23,6 +29,11 @@ class Application(models.Model):
     )
     cover_letter = models.TextField(blank=True, null=True)
     resume = models.FileField(
+        storage=(
+            cloudinary_storage.storage.RawMediaCloudinaryStorage()
+            if cloudinary_storage
+            else FileSystemStorage()
+        ),
         upload_to='application_resumes/',
         blank=False,
         null=False

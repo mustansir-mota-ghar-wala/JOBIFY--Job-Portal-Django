@@ -1,5 +1,11 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+try:
+    import cloudinary_storage.storage
+except ImportError:  # pragma: no cover - local fallback when optional dependency is missing
+    cloudinary_storage = None
 
 
 class CustomUser(AbstractUser):
@@ -48,7 +54,16 @@ class SeekerProfile(models.Model):
     skills = models.TextField(blank=True, null=True)
     education = models.CharField(max_length=200, blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
-    resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+    resume = models.FileField(
+        storage=(
+            cloudinary_storage.storage.RawMediaCloudinaryStorage()
+            if cloudinary_storage
+            else FileSystemStorage()
+        ),
+        upload_to='resumes/',
+        blank=True,
+        null=True,
+    )
     profile_image = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
     def __str__(self):
