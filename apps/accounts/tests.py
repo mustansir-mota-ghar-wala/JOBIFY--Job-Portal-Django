@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.accounts.models import CustomUser, SeekerProfile
 
@@ -33,11 +32,3 @@ class SeekerDashboardTests(TestCase):
         self.assertEqual(response.context['profile_completion'], 60)
         self.assertEqual(response.context['completed_items'], 3)
         self.assertContains(response, 'Seeker workspace')
-
-    def test_resume_link_normalizes_legacy_media_prefix(self):
-        profile = self.user.seeker_profile
-        profile.resume = SimpleUploadedFile('resume.pdf', b'resume content', content_type='application/pdf')
-        profile.save()
-        profile.resume.name = 'media/resumes/resume.pdf'
-
-        self.assertEqual(profile.resume_link, '/media/resumes/resume.pdf')

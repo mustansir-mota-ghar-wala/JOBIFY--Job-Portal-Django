@@ -3,12 +3,6 @@ from django.conf import settings
 from apps.jobs.models import Job
 
 
-def _normalized_file_name(file_field):
-    if not file_field:
-        return ""
-    return (file_field.name or "").replace("\\", "/").removeprefix("media/")
-
-
 class Application(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pending'),
@@ -47,18 +41,3 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.applicant.username} - {self.job.title}"
-
-    def save(self, *args, **kwargs):
-        if self.resume:
-            self.resume.name = _normalized_file_name(self.resume)
-        super().save(*args, **kwargs)
-
-    @property
-    def resume_link(self):
-        if not self.resume:
-            return ""
-        normalized_name = _normalized_file_name(self.resume)
-        try:
-            return self.resume.storage.url(normalized_name)
-        except Exception:  # pragma: no cover - storage backends can vary
-            return self.resume.url
