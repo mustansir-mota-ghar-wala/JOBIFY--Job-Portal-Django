@@ -90,3 +90,14 @@ class ApplicationFlowTests(TestCase):
         self.client.login(username='employer2', password='StrongPass123')
         forbidden_response = self.client.get(reverse('update_application_status', args=[application.id]))
         self.assertEqual(forbidden_response.status_code, 404)
+
+    def test_resume_link_normalizes_legacy_media_prefix(self):
+        application = Application.objects.create(
+            job=self.job,
+            applicant=self.seeker,
+            cover_letter='Hello',
+            resume=self._resume_file(),
+        )
+        application.resume.name = 'media/application_resumes/resume.pdf'
+
+        self.assertEqual(application.resume_link, '/media/application_resumes/resume.pdf')
