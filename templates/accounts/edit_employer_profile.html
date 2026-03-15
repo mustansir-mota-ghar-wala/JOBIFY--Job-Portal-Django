@@ -1,59 +1,111 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
+<section class="auth-shell">
+    <div class="row align-items-start g-4">
+        <div class="col-lg-5">
+            <div class="auth-panel auth-copy-panel">
+                <span class="dashboard-kicker">Company profile</span>
+                <h1 class="auth-title mt-3 mb-3">Present your company with clarity and trust.</h1>
+                <p class="auth-copy mb-4">
+                    A clear company profile helps candidates understand your brand, culture, and hiring context.
+                </p>
 
+                <div class="auth-feature-list">
+                    <div class="auth-feature-item">Add a logo and website to strengthen credibility</div>
+                    <div class="auth-feature-item">A clear description helps attract better-fit applicants</div>
+                    <div class="auth-feature-item">Location details make openings easier to evaluate</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="auth-panel">
                 <div class="mb-4">
                     <h2 class="fw-bold mb-1">Edit Employer Profile</h2>
-                    <p class="text-muted mb-0">
-                        Update your company information so job seekers can learn more about your organization.
-                    </p>
+                    <p class="text-muted mb-0">Update your company information so job seekers can learn more about your organization.</p>
                 </div>
 
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" novalidate class="stack-form">
                     {% csrf_token %}
 
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{{ field.label }}</label>
-
-                            {{ field }}
-
-                            {% if field.help_text %}
-                                <div class="form-text">
-                                    {{ field.help_text }}
+                    <div class="form-section">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.company_name.id_for_label }}">{{ form.company_name.label }}</label>
+                                    {{ form.company_name }}
+                                    {% if form.company_name.help_text %}
+                                        <div class="form-text">{{ form.company_name.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.company_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.company_name.errors }}</div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
+                            </div>
 
-                            {% if field.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ field.errors }}
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.website.id_for_label }}">{{ form.website.label }}</label>
+                                    {{ form.website }}
+                                    {% if form.website.help_text %}
+                                        <div class="form-text">{{ form.website.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.website.errors %}
+                                        <div class="text-danger small mt-1">{{ form.website.errors }}</div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+                                    {{ form.location }}
+                                    {% if form.location.help_text %}
+                                        <div class="form-text">{{ form.location.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.location.errors %}
+                                        <div class="text-danger small mt-1">{{ form.location.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.company_description.id_for_label }}">{{ form.company_description.label }}</label>
+                                    {{ form.company_description }}
+                                    {% if form.company_description.help_text %}
+                                        <div class="form-text">{{ form.company_description.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.company_description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.company_description.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.logo.id_for_label }}">{{ form.logo.label }}</label>
+                                    {{ form.logo }}
+                                    {% if form.logo.help_text %}
+                                        <div class="form-text">{{ form.logo.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.logo.errors %}
+                                        <div class="text-danger small mt-1">{{ form.logo.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                    {% endfor %}
-
-                    <div class="d-flex flex-wrap gap-2 mt-4">
-                        <button type="submit" class="btn btn-success">
-                            Save Changes
-                        </button>
-
-                        <a href="{% url 'employer_profile' %}" class="btn btn-secondary">
-                            Cancel
-                        </a>
-
-                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-primary">
-                            Back to Dashboard
-                        </a>
                     </div>
 
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="{% url 'employer_profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
+                    </div>
                 </form>
-
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

@@ -1,74 +1,182 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-    <div>
-        <h2 class="fw-bold">Employer Dashboard</h2>
-        <p class="text-muted mb-0">
-            Welcome back, {{ request.user.username }}.
-        </p>
-    </div>
+<style>
+.dashboard-company-card {
+    display: grid;
+    gap: 1rem;
+}
 
-    <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
-        <a href="{% url 'employer_profile' %}" class="btn btn-outline-primary">View Profile</a>
-        <a href="{% url 'create_job' %}" class="btn btn-success">Post New Job</a>
-    </div>
-</div>
+.dashboard-company-media {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid rgba(19, 34, 56, 0.08);
+    border-radius: 18px;
+    background: #f8fafc;
+}
 
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+.dashboard-company-logo {
+    width: 92px;
+    height: 92px;
+    border-radius: 18px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid rgba(19, 34, 56, 0.08);
+}
+
+.dashboard-company-logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0d6efd, #20c997);
+    color: #ffffff;
+    font-size: 1.75rem;
+    font-weight: 800;
+}
+
+.dashboard-company-copy {
+    min-width: 0;
+}
+
+.dashboard-company-copy h5,
+.dashboard-company-copy p {
+    overflow-wrap: anywhere;
+}
+
+.dashboard-company-copy h5 {
+    margin-bottom: 0.35rem;
+}
+
+.dashboard-company-detail {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(19, 34, 56, 0.08);
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.dashboard-company-detail span {
+    color: #5b6b7f;
+    font-weight: 600;
+}
+
+.dashboard-company-detail strong,
+.dashboard-company-detail a {
+    color: #132238;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-company-media,
+    .dashboard-company-detail {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-company-logo {
+        width: 84px;
+        height: 84px;
+    }
+}
+</style>
+<section class="dashboard-hero employer-hero mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <span class="dashboard-kicker">Employer workspace</span>
+            <h1 class="dashboard-title mt-3 mb-3">
+                Manage openings, monitor applicants, and keep your hiring pipeline moving.
+            </h1>
+            <p class="dashboard-subtitle mb-0">
+                Welcome back, {{ company.name|default:profile.company_name|default:request.user.username }}.
+                You currently have {{ active_jobs_count }} active opening{{ active_jobs_count|pluralize }}
+                and {{ total_applications }} application{{ total_applications|pluralize }} across your listings.
+            </p>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-hero-panel">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <p class="text-uppercase small fw-semibold mb-2 text-secondary">Hiring pulse</p>
+                        <h2 class="fw-bold mb-1">{{ shortlisted_count }}</h2>
+                        <p class="text-muted mb-0">candidate{{ shortlisted_count|pluralize }} shortlisted so far</p>
+                    </div>
+                    <span class="dashboard-chip">{{ request.user.posted_jobs.count }} jobs</span>
+                </div>
+
+                <div class="d-grid gap-2 d-sm-flex">
+                    <a href="{% url 'create_job' %}" class="btn btn-success flex-fill">Post New Job</a>
+                    <a href="{% url 'employer_profile' %}" class="btn btn-outline-primary flex-fill">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-primary h-100">
             <div class="card-body">
-                <h6 class="text-muted">Total Jobs</h6>
-                <h2 class="fw-bold mb-1">{{ request.user.posted_jobs.count }}</h2>
-                <p class="text-muted mb-0">All jobs posted by you</p>
+                <span class="dashboard-stat-label">Total Jobs</span>
+                <h2 class="dashboard-stat-value">{{ request.user.posted_jobs.count }}</h2>
+                <p class="mb-0">All roles posted by your company.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-success h-100">
             <div class="card-body">
-                <h6 class="text-muted">Total Applications</h6>
-                <h2 class="fw-bold mb-1">{{ total_applications }}</h2>
-                <p class="text-muted mb-0">Applications received</p>
+                <span class="dashboard-stat-label">Applications</span>
+                <h2 class="dashboard-stat-value">{{ total_applications }}</h2>
+                <p class="mb-0">Candidate submissions received across listings.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-warning h-100">
             <div class="card-body">
-                <h6 class="text-muted">Active Jobs</h6>
-                <h2 class="fw-bold mb-1">{{ active_jobs_count }}</h2>
-                <p class="text-muted mb-0">Currently open positions</p>
+                <span class="dashboard-stat-label">Active Jobs</span>
+                <h2 class="dashboard-stat-value">{{ active_jobs_count }}</h2>
+                <p class="mb-0">Positions currently open to applicants.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-dark h-100">
             <div class="card-body">
-                <h6 class="text-muted">Shortlisted Candidates</h6>
-                <h2 class="fw-bold mb-1">{{ shortlisted_count }}</h2>
-                <p class="text-muted mb-0">Applicants shortlisted</p>
+                <span class="dashboard-stat-label">Shortlisted</span>
+                <h2 class="dashboard-stat-value">{{ shortlisted_count }}</h2>
+                <p class="mb-0">Applicants moved to the next stage.</p>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-semibold mb-0">Recent Jobs</h5>
+<section class="row g-4">
+    <div class="col-xl-8">
+        <div class="card dashboard-surface h-100">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                    <div>
+                        <h4 class="fw-bold mb-1">Recent Jobs</h4>
+                        <p class="text-muted mb-0">Quick view of your latest published and managed roles.</p>
+                    </div>
                     <a href="{% url 'employer_job_list' %}" class="btn btn-sm btn-outline-dark">Manage Jobs</a>
                 </div>
 
                 {% if recent_jobs %}
                     <div class="table-responsive">
-                        <table class="table align-middle">
+                        <table class="table dashboard-table align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Job Title</th>
@@ -80,13 +188,20 @@
                             <tbody>
                                 {% for job in recent_jobs %}
                                     <tr>
-                                        <td>{{ job.title }}</td>
+                                        <td>
+                                            <div class="fw-semibold text-dark">{{ job.title }}</div>
+                                            {% if job.category %}
+                                                <small class="text-muted">{{ job.category.name }}</small>
+                                            {% else %}
+                                                <small class="text-muted">{{ job.get_employment_type_display }}</small>
+                                            {% endif %}
+                                        </td>
                                         <td>{{ job.location }}</td>
                                         <td>
                                             {% if job.is_active %}
-                                                <span class="badge bg-success">Active</span>
+                                                <span class="badge text-bg-success">Active</span>
                                             {% else %}
-                                                <span class="badge bg-secondary">Inactive</span>
+                                                <span class="badge text-bg-secondary">Inactive</span>
                                             {% endif %}
                                         </td>
                                         <td>{{ job.created_at|date:"d M Y" }}</td>
@@ -96,59 +211,71 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-muted mb-0">No jobs posted yet.</p>
+                    <div class="dashboard-empty-state">
+                        <h5 class="fw-bold mb-2">No jobs posted yet</h5>
+                        <p class="text-muted mb-3">Create your first listing to start attracting applicants.</p>
+                        <a href="{% url 'create_job' %}" class="btn btn-success">Post Your First Job</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </div>
 
-    <div class="col-lg-4">
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-                <h5 class="fw-semibold mb-3">Company Overview</h5>
+    <div class="col-xl-4">
+        <div class="card dashboard-surface mb-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Company Overview</h4>
 
-                {% if company and company.logo %}
-                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="img-thumbnail rounded mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                {% elif profile.logo %}
-                    <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" class="img-thumbnail rounded mb-3" style="width: 100px; height: 100px; object-fit: cover;">
-                {% endif %}
-
-                <p class="mb-2">
-                    <strong>Company:</strong>
-                    {{ company.name|default:profile.company_name }}
-                </p>
-
-                <p class="mb-2">
-                    <strong>Location:</strong>
-                    {{ company.location|default:profile.location|default:"Not added yet" }}
-                </p>
-
-                <p class="mb-2">
-                    <strong>Website:</strong>
-                    {% if company and company.website %}
-                        <a href="{{ company.website }}" target="_blank">Visit Website</a>
-                    {% elif profile.website %}
-                        <a href="{{ profile.website }}" target="_blank">Visit Website</a>
+                <div class="dashboard-company-card">
+                <div class="dashboard-company-media">
+                    {% if company and company.logo %}
+                        <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="dashboard-company-logo">
+                    {% elif profile.logo %}
+                        <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" class="dashboard-company-logo">
                     {% else %}
-                        Not added yet
+                        <div class="dashboard-company-logo dashboard-company-logo-placeholder">
+                            {{ company.name|default:profile.company_name|default:request.user.username|slice:":1"|upper }}
+                        </div>
                     {% endif %}
-                </p>
 
-                <a href="{% url 'employer_profile' %}" class="btn btn-outline-primary btn-sm mt-2">View Full Profile</a>
+                    <div class="dashboard-company-copy">
+                        <h5 class="fw-semibold mb-1">{{ company.name|default:profile.company_name }}</h5>
+                        <p class="text-muted mb-0">{{ company.location|default:profile.location|default:"Location not added yet" }}</p>
+                    </div>
+                </div>
+
+                    <div class="dashboard-company-detail">
+                        <span>Website</span>
+                        {% if company and company.website %}
+                            <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                        {% elif profile.website %}
+                            <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                        {% else %}
+                            <strong>Not added</strong>
+                        {% endif %}
+                    </div>
+
+                    <div class="dashboard-company-detail">
+                        <span>Company name</span>
+                        <strong>{{ company.name|default:profile.company_name }}</strong>
+                    </div>
+                </div>
+
+                <a href="{% url 'edit_employer_profile' %}" class="btn btn-outline-primary w-100 mt-3">Edit Company Profile</a>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h5 class="fw-semibold mb-3">Quick Actions</h5>
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Quick Actions</h4>
                 <div class="d-grid gap-2">
                     <a href="{% url 'create_job' %}" class="btn btn-success">Post New Job</a>
                     <a href="{% url 'employer_job_list' %}" class="btn btn-dark">Manage My Jobs</a>
                     <a href="{% url 'employer_applications' %}" class="btn btn-primary">View Applicants</a>
-                    <a href="{% url 'edit_employer_profile' %}" class="btn btn-outline-secondary">Edit Company Profile</a>
+                    <a href="{% url 'employer_profile' %}" class="btn btn-outline-secondary">View Company Profile</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

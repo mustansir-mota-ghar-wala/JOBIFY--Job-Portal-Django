@@ -144,21 +144,43 @@ def seeker_dashboard(request):
     shortlisted_count = applications.filter(status='shortlisted').count()
     reviewed_count = applications.filter(status='reviewed').count()
     rejected_count = applications.filter(status='rejected').count()
+    pending_count = applications.filter(status='pending').count()
     saved_jobs_count = saved_jobs.count()
 
     recent_applications = applications.order_by('-applied_at')[:5]
+    recent_saved_jobs = saved_jobs.order_by('-saved_at')[:4]
 
-    profile_completion = 0
-    if profile.full_name:
-        profile_completion += 20
-    if profile.skills:
-        profile_completion += 20
-    if profile.education:
-        profile_completion += 20
-    if profile.experience:
-        profile_completion += 20
-    if profile.resume:
-        profile_completion += 20
+    completion_items = [
+        {
+            'label': 'Full name',
+            'completed': bool(profile.full_name),
+            'hint': 'Add your full professional name.',
+        },
+        {
+            'label': 'Skills',
+            'completed': bool(profile.skills),
+            'hint': 'Highlight tools, technologies, and strengths.',
+        },
+        {
+            'label': 'Education',
+            'completed': bool(profile.education),
+            'hint': 'List your degree, college, or certifications.',
+        },
+        {
+            'label': 'Experience',
+            'completed': bool(profile.experience),
+            'hint': 'Show internships, freelance work, or roles.',
+        },
+        {
+            'label': 'Resume',
+            'completed': bool(profile.resume),
+            'hint': 'Upload an updated resume to apply faster.',
+        },
+    ]
+    completed_items = sum(1 for item in completion_items if item['completed'])
+    profile_completion = completed_items * 20
+    response_count = reviewed_count + shortlisted_count + rejected_count
+    response_rate = round((response_count / total_applications) * 100) if total_applications else 0
 
     context = {
         'profile': profile,
@@ -166,9 +188,15 @@ def seeker_dashboard(request):
         'shortlisted_count': shortlisted_count,
         'reviewed_count': reviewed_count,
         'rejected_count': rejected_count,
+        'pending_count': pending_count,
+        'response_count': response_count,
+        'response_rate': response_rate,
         'saved_jobs_count': saved_jobs_count,
         'recent_applications': recent_applications,
+        'recent_saved_jobs': recent_saved_jobs,
         'profile_completion': profile_completion,
+        'completion_items': completion_items,
+        'completed_items': completed_items,
     }
     return render(request, 'accounts/seeker_dashboard.html', context)
 

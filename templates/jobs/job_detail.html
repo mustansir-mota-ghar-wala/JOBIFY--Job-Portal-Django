@@ -1,90 +1,283 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <div class="d-flex align-items-center mb-4">
+<section class="job-detail-shell">
+    <style>
+    .job-detail-panel {
+        background: #ffffff;
+        border: 1px solid rgba(19, 34, 56, 0.1);
+        border-radius: 28px;
+        box-shadow: 0 20px 44px rgba(19, 34, 56, 0.08);
+        overflow: hidden;
+    }
+
+    .job-detail-header {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: center;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(19, 34, 56, 0.08);
+        background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
+    }
+
+    .job-detail-logo {
+        width: 180px;
+        height: 180px;
+        border-radius: 24px;
+        object-fit: cover;
+        display: block;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+    }
+
+    .job-detail-logo-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #122033, #2a4365);
+        color: #ffffff;
+        font-size: 3rem;
+        font-weight: 800;
+    }
+
+    .job-detail-kicker {
+        color: #5b6b7f;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .job-detail-title {
+        margin: 0.65rem 0 0.5rem;
+        color: #132238;
+        font-size: clamp(2.2rem, 4vw, 3.35rem);
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .job-detail-company {
+        margin: 0 0 1rem;
+        color: #5b6b7f;
+        font-size: 1.15rem;
+    }
+
+    .job-detail-body {
+        padding: 2rem;
+    }
+
+    .job-detail-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 1.5rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .job-detail-info-card {
+        padding: 1.25rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 20px;
+        background: #fbfcfe;
+    }
+
+    .job-detail-info-list {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .job-detail-info-row {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+    }
+
+    .job-detail-info-row span {
+        color: #5b6b7f;
+        font-weight: 600;
+    }
+
+    .job-detail-info-row strong,
+    .job-detail-info-row a {
+        color: #132238;
+        font-weight: 700;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .job-detail-section {
+        padding: 1.5rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 22px;
+        background: #ffffff;
+        margin-bottom: 1.25rem;
+    }
+
+    .job-detail-section h4 {
+        margin-bottom: 0.9rem;
+        color: #132238;
+        font-weight: 800;
+    }
+
+    .job-detail-section p:last-child {
+        margin-bottom: 0;
+    }
+
+    .job-detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .job-detail-header {
+            grid-template-columns: 1fr;
+        }
+
+        .job-detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .job-detail-header,
+        .job-detail-body {
+            padding: 1.35rem;
+        }
+
+        .job-detail-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 18px;
+        }
+
+        .job-detail-info-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <div class="job-detail-panel">
+        <div class="job-detail-header">
             {% if job.company and job.company.logo %}
-                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="rounded me-3 border" style="width: 75px; height: 75px; object-fit: cover;">
+                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="job-detail-logo">
             {% else %}
-                <div class="rounded me-3 border bg-light d-flex align-items-center justify-content-center text-muted" style="width: 75px; height: 75px;">
-                    <small>Logo</small>
+                <div class="job-detail-logo job-detail-logo-placeholder">
+                    {{ job.company.name|default:job.employer.username|slice:":1"|upper }}
                 </div>
             {% endif %}
 
             <div>
-                <h2 class="mb-1">{{ job.title }}</h2>
-                <p class="text-muted mb-0">
-                    {{ job.company.name|default:job.employer.username }}
-                </p>
+                <div class="job-detail-kicker">Job opening</div>
+                <h1 class="job-detail-title">{{ job.title }}</h1>
+                <p class="job-detail-company">{{ job.company.name|default:job.employer.username }}</p>
+
+                <div class="job-meta">
+                    <span>{{ job.location }}</span>
+                    {% if job.job_type %}
+                        <span>{{ job.get_job_type_display }}</span>
+                    {% endif %}
+                    {% if job.employment_type %}
+                        <span>{{ job.get_employment_type_display }}</span>
+                    {% endif %}
+                    {% if job.work_mode %}
+                        <span>{{ job.get_work_mode_display }}</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <p class="mb-2"><strong>Location:</strong> {{ job.location }}</p>
+        <div class="job-detail-body">
+            <div class="job-detail-grid">
+                <div class="job-detail-info-card">
+                    <div class="job-detail-info-list">
+                        <div class="job-detail-info-row">
+                            <span>Posted by</span>
+                            <strong>{{ job.company.name|default:job.employer.username }}</strong>
+                        </div>
+                        {% if job.category %}
+                            <div class="job-detail-info-row">
+                                <span>Category</span>
+                                <strong>{{ job.category.name }}</strong>
+                            </div>
+                        {% endif %}
+                        {% if job.salary %}
+                            <div class="job-detail-info-row">
+                                <span>Salary</span>
+                                <strong>{{ job.salary }}</strong>
+                            </div>
+                        {% elif job.salary_min or job.salary_max %}
+                            <div class="job-detail-info-row">
+                                <span>Salary range</span>
+                                <strong>{{ job.salary_min|default:"-" }} - {{ job.salary_max|default:"-" }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
 
-                {% if job.job_type %}
-                    <p class="mb-2"><strong>Job Type:</strong> {{ job.get_job_type_display }}</p>
-                {% endif %}
-
-                {% if job.category %}
-                    <p class="mb-2"><strong>Category:</strong> {{ job.category.name }}</p>
-                {% endif %}
+                <div class="job-detail-info-card">
+                    <div class="job-detail-info-list">
+                        {% if job.deadline %}
+                            <div class="job-detail-info-row">
+                                <span>Deadline</span>
+                                <strong>{{ job.deadline|date:"d M Y" }}</strong>
+                            </div>
+                        {% endif %}
+                        {% if job.company and job.company.website %}
+                            <div class="job-detail-info-row">
+                                <span>Website</span>
+                                <a href="{{ job.company.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                            </div>
+                        {% endif %}
+                        {% if job.company and job.company.location %}
+                            <div class="job-detail-info-row">
+                                <span>Company location</span>
+                                <strong>{{ job.company.location }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6">
-                {% if job.salary %}
-                    <p class="mb-2"><strong>Salary:</strong> {{ job.salary }}</p>
-                {% endif %}
-
-                {% if job.deadline %}
-                    <p class="mb-2"><strong>Deadline:</strong> {{ job.deadline }}</p>
-                {% endif %}
-
-                <p class="mb-2">
-                    <strong>Posted by:</strong> {{ job.company.name|default:job.employer.username }}
-                </p>
+            <div class="job-detail-section">
+                <h4>Job Description</h4>
+                <p>{{ job.description|linebreaksbr }}</p>
             </div>
-        </div>
 
-        {% if job.company and job.company.website %}
-            <p class="mb-2">
-                <strong>Company Website:</strong>
-                <a href="{{ job.company.website }}" target="_blank">{{ job.company.website }}</a>
-            </p>
-        {% endif %}
+            {% if job.responsibilities %}
+                <div class="job-detail-section">
+                    <h4>Responsibilities</h4>
+                    <p>{{ job.responsibilities|linebreaksbr }}</p>
+                </div>
+            {% endif %}
 
-        {% if job.company and job.company.location %}
-            <p class="mb-3">
-                <strong>Company Location:</strong> {{ job.company.location }}
-            </p>
-        {% endif %}
+            {% if job.requirements %}
+                <div class="job-detail-section">
+                    <h4>Requirements</h4>
+                    <p>{{ job.requirements|linebreaksbr }}</p>
+                </div>
+            {% endif %}
 
-        <hr>
+            <div class="job-detail-actions">
+                {% if user.is_authenticated and user.role == 'seeker' %}
+                    {% if has_applied %}
+                        <button class="btn btn-secondary" disabled>Already Applied</button>
+                    {% else %}
+                        <a href="{% url 'apply_job' job.id %}" class="btn btn-success">Apply Now</a>
+                    {% endif %}
 
-        <h5 class="fw-semibold mb-3">Job Description</h5>
-        <p>{{ job.description }}</p>
-
-        {% if user.is_authenticated and user.role == 'seeker' %}
-            <div class="mt-4 d-flex flex-wrap gap-2">
-                {% if has_applied %}
-                    <button class="btn btn-secondary" disabled>Already Applied</button>
-                {% else %}
-                    <a href="{% url 'apply_job' job.id %}" class="btn btn-success">Apply Now</a>
+                    {% if is_saved %}
+                        <a href="{% url 'unsave_job' job.id %}" class="btn btn-outline-danger">Remove Saved</a>
+                    {% else %}
+                        <a href="{% url 'save_job' job.id %}" class="btn btn-outline-primary">Save Job</a>
+                    {% endif %}
                 {% endif %}
 
-                {% if is_saved %}
-                    <a href="{% url 'unsave_job' job.id %}" class="btn btn-outline-danger">Remove Saved</a>
-                {% else %}
-                    <a href="{% url 'save_job' job.id %}" class="btn btn-outline-primary">Save Job</a>
-                {% endif %}
+                <a href="{% url 'job_list' %}" class="btn btn-outline-dark">Back to Jobs</a>
             </div>
-        {% endif %}
-
-        <div class="mt-4">
-            <a href="{% url 'job_list' %}" class="btn btn-secondary">Back to Jobs</a>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

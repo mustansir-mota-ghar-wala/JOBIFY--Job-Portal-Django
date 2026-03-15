@@ -1,45 +1,109 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
+<section class="auth-shell">
+    <div class="row align-items-start g-4">
+        <div class="col-lg-5">
+            <div class="auth-panel auth-copy-panel">
+                <span class="dashboard-kicker">Edit profile</span>
+                <h1 class="auth-title mt-3 mb-3">Keep your profile ready for the next opportunity.</h1>
+                <p class="auth-copy mb-4">
+                    Add the details employers care about most: your skills, education, experience, and resume.
+                </p>
+
+                <div class="auth-feature-list">
+                    <div class="auth-feature-item">Complete profiles create stronger first impressions</div>
+                    <div class="auth-feature-item">An updated resume helps you apply faster</div>
+                    <div class="auth-feature-item">Clear skills and experience improve role matching</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="auth-panel">
                 <div class="mb-4">
                     <h2 class="fw-bold mb-1">Edit My Profile</h2>
-                    <p class="text-muted mb-0">
-                        Update your profile information to improve your job applications.
-                    </p>
+                    <p class="text-muted mb-0">Update your profile information to improve your job applications.</p>
                 </div>
 
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" novalidate class="stack-form">
                     {% csrf_token %}
 
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">{{ field.label }}</label>
-                            {{ field }}
-
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
-
-                            {% if field.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ field.errors }}
+                    <div class="form-section">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}</label>
+                                    {{ form.full_name }}
+                                    {% if form.full_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.full_name.errors }}</div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                            </div>
 
-                    <div class="d-flex flex-wrap gap-2 mt-4">
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.education.id_for_label }}">{{ form.education.label }}</label>
+                                    {{ form.education }}
+                                    {% if form.education.errors %}
+                                        <div class="text-danger small mt-1">{{ form.education.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.profile_image.id_for_label }}">{{ form.profile_image.label }}</label>
+                                    {{ form.profile_image }}
+                                    {% if form.profile_image.errors %}
+                                        <div class="text-danger small mt-1">{{ form.profile_image.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
+                                    {{ form.skills }}
+                                    {% if form.skills.errors %}
+                                        <div class="text-danger small mt-1">{{ form.skills.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.experience.id_for_label }}">{{ form.experience.label }}</label>
+                                    {{ form.experience }}
+                                    {% if form.experience.errors %}
+                                        <div class="text-danger small mt-1">{{ form.experience.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label fw-semibold" for="{{ form.resume.id_for_label }}">{{ form.resume.label }}</label>
+                                    {{ form.resume }}
+                                    {% if form.resume.help_text %}
+                                        <div class="form-text">{{ form.resume.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.resume.errors %}
+                                        <div class="text-danger small mt-1">{{ form.resume.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions mt-4">
                         <button type="submit" class="btn btn-success">Save Changes</button>
-                        <a href="{% url 'seeker_profile' %}" class="btn btn-secondary">Cancel</a>
-                        <a href="{% url 'seeker_dashboard' %}" class="btn btn-outline-primary">Back to Dashboard</a>
+                        <a href="{% url 'seeker_profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <a href="{% url 'seeker_dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

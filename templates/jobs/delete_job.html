@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h3 class="mb-3">Delete Job</h3>
-                <p>Are you sure you want to delete <strong>{{ job.title }}</strong>?</p>
+<section class="auth-shell">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="auth-panel">
+                <span class="dashboard-kicker">Delete job</span>
+                <h2 class="fw-bold mt-3 mb-2">Remove this job posting?</h2>
+                <p class="text-muted mb-4">
+                    This will remove <strong>{{ job.title }}</strong> from your listings. Make sure you really want to delete it.
+                </p>
 
                 <form method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    <a href="{% url 'employer_job_list' %}" class="btn btn-secondary">Cancel</a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <a href="{% url 'employer_job_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

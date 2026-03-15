@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section p-5 mb-5 rounded-4 text-center text-md-start">
+<section class="hero-section p-5 mb-5 rounded-4 text-center text-md-start">
     <div class="row align-items-center g-4">
         <div class="col-md-8">
             <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2 rounded-pill">
@@ -14,11 +14,11 @@
             </h1>
 
             <p class="lead mb-4">
-                A modern job portal that connects employers with talented professionals.
-                Discover opportunities, build your profile, upload resumes, and apply seamlessly from one platform.
+                A polished job portal that connects employers with talented professionals.
+                Discover opportunities, build your profile, upload resumes, and manage hiring from one place.
             </p>
 
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
                 <a href="{% url 'job_list' %}" class="btn btn-primary btn-lg">
                     Browse Jobs
                 </a>
@@ -44,29 +44,29 @@
         </div>
 
         <div class="col-md-4 text-center">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white highlight-panel">
                 <h5 class="fw-bold mb-3">Platform Highlights</h5>
-                <div class="text-start">
-                    <p class="mb-2">✅ Role-based dashboards</p>
-                    <p class="mb-2">✅ Job posting & applications</p>
-                    <p class="mb-2">✅ Resume uploads</p>
-                    <p class="mb-2">✅ Saved jobs</p>
-                    <p class="mb-2">✅ Search & filters</p>
-                    <p class="mb-0">✅ Application tracking</p>
+                <div class="text-start highlight-list">
+                    <p class="mb-2">Role-based dashboards</p>
+                    <p class="mb-2">Job posting and applications</p>
+                    <p class="mb-2">Resume uploads and saved jobs</p>
+                    <p class="mb-2">Employer application review</p>
+                    <p class="mb-2">Search and filtering tools</p>
+                    <p class="mb-0">Status tracking throughout the process</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="row g-4 mb-5">
+<section class="row g-4 mb-5">
     <div class="col-md-4">
         <div class="card shadow-sm h-100 feature-card border-0">
             <div class="card-body p-4">
                 <h4 class="fw-bold">For Employers</h4>
                 <p class="mb-0 text-muted">
                     Publish job openings, manage listings, review candidate applications,
-                    and streamline the hiring process from one professional dashboard.
+                    and streamline hiring from one professional dashboard.
                 </p>
             </div>
         </div>
@@ -78,7 +78,7 @@
                 <h4 class="fw-bold">For Job Seekers</h4>
                 <p class="mb-0 text-muted">
                     Discover relevant opportunities, upload your resume, save jobs,
-                    and track all your applications in one place.
+                    and track your applications in one place.
                 </p>
             </div>
         </div>
@@ -87,17 +87,17 @@
     <div class="col-md-4">
         <div class="card shadow-sm h-100 feature-card border-0">
             <div class="card-body p-4">
-                <h4 class="fw-bold">Smart Hiring Platform</h4>
+                <h4 class="fw-bold">Clean Hiring Workflow</h4>
                 <p class="mb-0 text-muted">
                     Jobify brings employers and job seekers together with a fast,
-                    organized, and transparent hiring workflow.
+                    organized, and transparent recruitment experience.
                 </p>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="mb-5">
+<section class="mb-5">
     <h2 class="mb-4 text-center fw-bold">Why Choose Jobify</h2>
 
     <div class="row g-4">
@@ -106,7 +106,7 @@
                 <div class="card-body">
                     <h5 class="fw-bold">Custom User Roles</h5>
                     <p class="mb-0 text-muted">
-                        Separate employer and seeker experiences make the platform more organized and practical.
+                        Separate employer and seeker experiences keep the platform focused and practical.
                     </p>
                 </div>
             </div>
@@ -115,7 +115,7 @@
         <div class="col-md-3">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
                 <div class="card-body">
-                    <h5 class="fw-bold">Resume Upload</h5>
+                    <h5 class="fw-bold">Resume Uploads</h5>
                     <p class="mb-0 text-muted">
                         Applicants can upload resumes and apply directly through the platform.
                     </p>
@@ -126,7 +126,7 @@
         <div class="col-md-3">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
                 <div class="card-body">
-                    <h5 class="fw-bold">Search & Filters</h5>
+                    <h5 class="fw-bold">Search and Filters</h5>
                     <p class="mb-0 text-muted">
                         Quickly find relevant opportunities using keyword search and practical filters.
                     </p>
@@ -137,17 +137,17 @@
         <div class="col-md-3">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
                 <div class="card-body">
-                    <h5 class="fw-bold">Email Alerts</h5>
+                    <h5 class="fw-bold">Application Updates</h5>
                     <p class="mb-0 text-muted">
-                        Stay informed with updates for applications and status changes.
+                        Stay informed as applications move from pending to reviewed and beyond.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+<section class="card shadow-sm border-0 rounded-4 p-4 mb-4 callout-card">
     <div class="row align-items-center">
         <div class="col-md-8">
             <h3 class="fw-bold mb-2">Start your journey with Jobify</h3>
@@ -169,5 +169,5 @@
             {% endif %}
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

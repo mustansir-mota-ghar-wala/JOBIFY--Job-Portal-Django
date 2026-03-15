@@ -1,85 +1,226 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1">My Applications</h2>
-        <p class="text-muted mb-0">Track the progress of jobs you have applied for.</p>
-    </div>
+<section class="applications-shell">
+    <style>
+    .my-application-list {
+        display: grid;
+        gap: 1rem;
+    }
 
-    <div class="mt-3 mt-md-0">
+    .my-application-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(19, 34, 56, 0.14);
+        border-radius: 24px;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(19, 34, 56, 0.05);
+    }
+
+    .my-application-main {
+        min-width: 0;
+    }
+
+    .my-application-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .my-application-title {
+        margin: 0 0 0.2rem;
+        color: #132238;
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.25;
+        word-break: break-word;
+    }
+
+    .my-application-company {
+        margin: 0;
+        color: #5b6b7f;
+        font-size: 0.98rem;
+    }
+
+    .my-application-meta {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .my-application-meta-row {
+        display: grid;
+        grid-template-columns: 110px minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+    }
+
+    .my-application-meta-row span {
+        color: #5b6b7f;
+        font-weight: 600;
+    }
+
+    .my-application-meta-row strong {
+        color: #132238;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .my-application-note {
+        margin-top: 1rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 18px;
+        background: #f8fafc;
+        color: #5b6b7f;
+        line-height: 1.7;
+    }
+
+    .my-application-side {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-left: 1rem;
+        border-left: 1px solid rgba(19, 34, 56, 0.08);
+    }
+
+    .my-application-status {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .my-application-actions {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .my-application-item {
+            grid-template-columns: 1fr;
+        }
+
+        .my-application-side {
+            padding-left: 0;
+            border-left: 0;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(19, 34, 56, 0.08);
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .my-application-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .my-application-meta-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">My Applications</h2>
+            <p class="text-muted mb-0">Track the progress of jobs you have applied for.</p>
+        </div>
         <a href="{% url 'job_list' %}" class="btn btn-primary">Browse More Jobs</a>
     </div>
-</div>
 
-<div class="row g-4">
-    {% for application in applications %}
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <h4 class="mb-1">{{ application.job.title }}</h4>
-                    <p class="text-muted mb-2">
-                        {{ application.job.company.name|default:application.job.employer.username }}
-                    </p>
-                    <p class="text-muted">{{ application.job.location }}</p>
+    {% if applications %}
+        <div class="my-application-list">
+            {% for application in applications %}
+                <article class="my-application-item">
+                    <div class="my-application-main">
+                        <div class="my-application-top">
+                            <div>
+                                <h3 class="my-application-title">{{ application.job.title }}</h3>
+                                <p class="my-application-company">{{ application.job.company.name|default:application.job.employer.username }}</p>
+                            </div>
 
-                    <p class="mb-2">
-                        <strong>Status:</strong>
-                        {% if application.status == 'pending' %}
-                            <span class="badge bg-warning text-dark">Pending</span>
-                        {% elif application.status == 'reviewed' %}
-                            <span class="badge bg-info">Reviewed</span>
-                        {% elif application.status == 'shortlisted' %}
-                            <span class="badge bg-success">Shortlisted</span>
-                        {% elif application.status == 'rejected' %}
-                            <span class="badge bg-danger">Rejected</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ application.get_status_display }}</span>
-                        {% endif %}
-                    </p>
+                            {% if application.status == 'pending' %}
+                                <span class="badge text-bg-warning">Pending</span>
+                            {% elif application.status == 'reviewed' %}
+                                <span class="badge text-bg-info">Reviewed</span>
+                            {% elif application.status == 'shortlisted' %}
+                                <span class="badge text-bg-success">Shortlisted</span>
+                            {% elif application.status == 'rejected' %}
+                                <span class="badge text-bg-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">{{ application.get_status_display }}</span>
+                            {% endif %}
+                        </div>
 
-                    <p class="mb-3">
-                        <strong>Applied At:</strong> {{ application.applied_at|date:"d M Y, h:i A" }}
-                    </p>
+                        <div class="my-application-meta">
+                            <div class="my-application-meta-row">
+                                <span>Location</span>
+                                <strong>{{ application.job.location }}</strong>
+                            </div>
+                            <div class="my-application-meta-row">
+                                <span>Applied On</span>
+                                <strong>{{ application.applied_at|date:"d M Y" }}</strong>
+                            </div>
+                        </div>
 
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{% url 'job_detail' application.job.id %}" class="btn btn-primary">View Job</a>
+                        <div class="my-application-note">
+                            Keep your profile updated while this application moves through the hiring process.
+                        </div>
                     </div>
-                </div>
-            </div>
+
+                    <div class="my-application-side">
+                        <div class="my-application-status">
+                            {% if application.status == 'pending' %}
+                                <span class="badge text-bg-warning">Pending</span>
+                            {% elif application.status == 'reviewed' %}
+                                <span class="badge text-bg-info">Reviewed</span>
+                            {% elif application.status == 'shortlisted' %}
+                                <span class="badge text-bg-success">Shortlisted</span>
+                            {% elif application.status == 'rejected' %}
+                                <span class="badge text-bg-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">{{ application.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="my-application-actions">
+                            <a href="{% url 'job_detail' application.job.id %}" class="btn btn-primary w-100">View Job</a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
         </div>
-    {% empty %}
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center py-5">
-                    <h4>No applications yet</h4>
-                    <p class="text-muted">Start applying to jobs and track them here.</p>
-                    <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
-                </div>
-            </div>
+    {% else %}
+        <div class="dashboard-empty-state">
+            <h4 class="fw-bold">No applications yet</h4>
+            <p class="text-muted mb-3">Start applying to jobs and track them here.</p>
+            <a href="{% url 'job_list' %}" class="btn btn-primary">Browse Jobs</a>
         </div>
-    {% endfor %}
-</div>
+    {% endif %}
 
-{% if page_obj.has_other_pages %}
-<nav class="mt-4">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            </li>
-        {% endif %}
+    {% if page_obj.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
 
-        <li class="page-item active">
-            <span class="page-link">{{ page_obj.number }}</span>
-        </li>
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }}</span>
+                </li>
 
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-            </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</section>
 {% endblock %}

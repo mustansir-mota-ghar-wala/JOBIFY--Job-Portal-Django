@@ -1,76 +1,201 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <div>
-                <h2 class="fw-bold mb-1">
-                    {{ company.name|default:profile.company_name }}
-                </h2>
-                <p class="text-muted mb-0">
-                    Employer Account: {{ profile.user.username }}
+<section class="profile-shell">
+    <style>
+    .employer-profile-hero {
+        padding: 1.75rem 2rem;
+    }
+
+    .employer-profile-hero .profile-avatar {
+        width: 124px;
+        height: 124px;
+        border-radius: 24px;
+    }
+
+    .employer-profile-card {
+        height: auto !important;
+    }
+
+    .employer-profile-card .card-body {
+        padding: 2rem;
+    }
+
+    .employer-profile-sidebar {
+        display: grid;
+        gap: 1.5rem;
+        align-content: start;
+    }
+
+    .employer-info-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .employer-info-item {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .employer-info-item span {
+        color: #5b6b7f;
+        font-weight: 600;
+    }
+
+    .employer-info-item strong,
+    .employer-info-item a {
+        color: #132238;
+        font-weight: 700;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    .account-box {
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .account-box-row {
+        padding: 0.95rem 1rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .account-box-row span {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: #5b6b7f;
+        font-size: 0.92rem;
+        font-weight: 600;
+    }
+
+    .account-box-row strong {
+        color: #132238;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 767.98px) {
+        .employer-profile-hero {
+            padding: 1.35rem;
+        }
+
+        .employer-profile-hero .profile-avatar {
+            width: 104px;
+            height: 104px;
+            border-radius: 20px;
+        }
+
+        .employer-profile-card .card-body {
+            padding: 1.35rem;
+        }
+
+        .employer-info-item {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <div class="profile-hero employer-hero employer-profile-hero mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-auto">
+                {% if company and company.logo %}
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="profile-avatar">
+                {% elif profile.logo %}
+                    <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar profile-avatar-placeholder">
+                        {{ company.name|default:profile.company_name|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col">
+                <span class="dashboard-kicker">Employer profile</span>
+                <h1 class="profile-title mt-3 mb-2">{{ company.name|default:profile.company_name }}</h1>
+                <p class="profile-subtitle mb-0">
+                    Employer account: {{ profile.user.username }}.
+                    Keep your company profile polished to build trust with candidates.
                 </p>
             </div>
 
-            <a href="{% url 'edit_employer_profile' %}" class="btn btn-primary">
-                Edit Profile
-            </a>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="text-center">
-                    {% if company and company.logo %}
-                        <img src="{{ company.logo.url }}" alt="Company Logo" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
-                    {% elif profile.logo %}
-                        <img src="{{ profile.logo.url }}" alt="Company Logo" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
-                    {% else %}
-                        <div class="border rounded d-flex align-items-center justify-content-center bg-light text-muted mx-auto mb-3" style="width: 180px; height: 180px;">
-                            No Logo
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="col-md-8">
-                <div class="mb-3">
-                    <h5 class="fw-semibold">Company Information</h5>
-                    <hr>
-                </div>
-
-                <p>
-                    <strong>Company Name:</strong>
-                    {{ company.name|default:profile.company_name }}
-                </p>
-
-                <p>
-                    <strong>Description:</strong>
-                    {{ company.description|default:profile.company_description|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Website:</strong>
-                    {% if company and company.website %}
-                        <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
-                    {% elif profile.website %}
-                        <a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a>
-                    {% else %}
-                        Not added yet
-                    {% endif %}
-                </p>
-
-                <p>
-                    <strong>Location:</strong>
-                    {{ company.location|default:profile.location|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Account Username:</strong>
-                    {{ profile.user.username }}
-                </p>
+            <div class="col-md-auto">
+                <a href="{% url 'edit_employer_profile' %}" class="btn btn-primary">Edit Profile</a>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card dashboard-surface employer-profile-card">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-4">Company Information</h4>
+
+                    <div class="employer-info-list">
+                        <div class="employer-info-item">
+                            <span>Company Name</span>
+                            <strong>{{ company.name|default:profile.company_name }}</strong>
+                        </div>
+                        <div class="employer-info-item">
+                            <span>Description</span>
+                            <strong>{{ company.description|default:profile.company_description|default:"Not added yet" }}</strong>
+                        </div>
+                        <div class="employer-info-item">
+                            <span>Website</span>
+                            {% if company and company.website %}
+                                <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">{{ company.website }}</a>
+                            {% elif profile.website %}
+                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">{{ profile.website }}</a>
+                            {% else %}
+                                <strong>Not added yet</strong>
+                            {% endif %}
+                        </div>
+                        <div class="employer-info-item">
+                            <span>Location</span>
+                            <strong>{{ company.location|default:profile.location|default:"Not added yet" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="employer-profile-sidebar">
+            <div class="card dashboard-surface employer-profile-card">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-3">Account Details</h4>
+                    <div class="account-box">
+                        <div class="account-box-row">
+                            <span>Username</span>
+                            <strong>{{ profile.user.username }}</strong>
+                        </div>
+                        <div class="account-box-row">
+                            <span>Public Name</span>
+                            <strong>{{ company.name|default:profile.company_name }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card dashboard-surface employer-profile-card">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-3">Quick Actions</h4>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'edit_employer_profile' %}" class="btn btn-primary">Update Profile</a>
+                        <a href="{% url 'create_job' %}" class="btn btn-success">Post New Job</a>
+                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

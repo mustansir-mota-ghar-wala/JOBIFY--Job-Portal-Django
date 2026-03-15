@@ -1,40 +1,131 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="mb-4">Post Job</h2>
+<section class="auth-shell">
+    <div class="row align-items-start g-4">
+        <div class="col-lg-5">
+            <div class="auth-panel auth-copy-panel">
+                <span class="dashboard-kicker">Job posting</span>
+                <h1 class="auth-title mt-3 mb-3">Create a role that attracts the right candidates.</h1>
+                <p class="auth-copy mb-4">
+                    Clear expectations, location details, and role requirements help applicants self-select well.
+                </p>
 
-                <form method="POST">
+                <div class="auth-feature-list">
+                    <div class="auth-feature-item">Use a strong title and concise description</div>
+                    <div class="auth-feature-item">Add requirements and responsibilities for clarity</div>
+                    <div class="auth-feature-item">Keep job status and activity settings up to date</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="auth-panel">
+                <h2 class="mb-1 fw-bold">Post Job</h2>
+                <p class="text-muted mb-4">Fill in the role details to publish or update this opening.</p>
+
+                <form method="POST" novalidate class="stack-form">
                     {% csrf_token %}
 
-                    {% for field in form %}
-                        <div class="mb-3">
-                            {% if field.name == 'is_active' %}
-                                <div class="form-check">
-                                    {{ field }}
-                                    <label class="form-check-label">{{ field.label }}</label>
+                    <div class="form-section">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                                    {% endif %}
                                 </div>
-                            {% else %}
-                                <label class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                            {% endif %}
+                            </div>
 
-                            {% if field.errors %}
-                                <div class="text-danger small mt-1">
-                                    {{ field.errors }}
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+                                    {{ form.category }}
+                                    {% if form.category.errors %}
+                                        <div class="text-danger small mt-1">{{ form.category.errors }}</div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.job_type.id_for_label }}">{{ form.job_type.label }}</label>
+                                    {{ form.job_type }}
+                                    {% if form.job_type.errors %}
+                                        <div class="text-danger small mt-1">{{ form.job_type.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+                                    {{ form.location }}
+                                    {% if form.location.errors %}
+                                        <div class="text-danger small mt-1">{{ form.location.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.salary.id_for_label }}">{{ form.salary.label }}</label>
+                                    {{ form.salary }}
+                                    {% if form.salary.errors %}
+                                        <div class="text-danger small mt-1">{{ form.salary.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.deadline.id_for_label }}">{{ form.deadline.label }}</label>
+                                    {{ form.deadline }}
+                                    {% if form.deadline.help_text %}
+                                        <div class="form-text">{{ form.deadline.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.deadline.errors %}
+                                        <div class="text-danger small mt-1">{{ form.deadline.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="field-shell">
+                                    <div class="form-check">
+                                        {{ form.is_active }}
+                                        <label class="form-check-label" for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+                                    </div>
+                                    {% if form.is_active.help_text %}
+                                        <div class="form-text">{{ form.is_active.help_text }}</div>
+                                    {% endif %}
+                                    {% if form.is_active.errors %}
+                                        <div class="text-danger small mt-1">{{ form.is_active.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="field-shell">
+                                    <label class="form-label" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                    {% endfor %}
+                    </div>
 
-                    <button type="submit" class="btn btn-success">Save Job</button>
-                    <a href="{% url 'employer_job_list' %}" class="btn btn-secondary">Cancel</a>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Save Job</button>
+                        <a href="{% url 'employer_job_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

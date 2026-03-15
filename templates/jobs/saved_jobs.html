@@ -1,66 +1,192 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold">My Saved Jobs</h2>
-    <a href="{% url 'job_list' %}" class="btn btn-primary">Browse More Jobs</a>
-</div>
+<section class="jobs-shell">
+    <style>
+    .saved-jobs-panel {
+        display: grid;
+        gap: 1rem;
+    }
 
-<div class="row">
-    {% for saved_job in saved_jobs %}
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4 h-100">
-                <div class="card-body">
-                    <h4>{{ saved_job.job.title }}</h4>
-                    <p class="text-muted">{{ saved_job.job.location }} | {{ saved_job.job.get_job_type_display }}</p>
+    .saved-job-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 260px;
+        gap: 1.5rem;
+        align-items: start;
+        padding: 1.5rem;
+        border: 1px solid rgba(19, 34, 56, 0.14);
+        border-radius: 22px;
+        background: #ffffff;
+        box-shadow: 0 14px 28px rgba(19, 34, 56, 0.06);
+    }
 
-                    {% if saved_job.job.category %}
-                        <p><strong>Category:</strong> {{ saved_job.job.category.name }}</p>
-                    {% endif %}
+    .saved-job-main {
+        min-width: 0;
+    }
 
-                    <p>{{ saved_job.job.description|truncatewords:20 }}</p>
+    .saved-job-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
 
+    .saved-job-head h4 {
+        margin-bottom: 0.35rem;
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+
+    .saved-job-company {
+        color: #5b6b7f;
+        font-size: 1.05rem;
+        margin-bottom: 0;
+    }
+
+    .saved-job-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.25rem;
+        color: #132238;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .saved-job-description {
+        color: #5b6b7f;
+        font-size: 1.02rem;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+
+    .saved-job-side {
+        display: grid;
+        gap: 1rem;
+        align-content: start;
+        min-width: 0;
+        padding-left: 1.5rem;
+        border-left: 1px solid rgba(19, 34, 56, 0.14);
+    }
+
+    .saved-job-salary {
+        color: #132238;
+        font-size: 1.05rem;
+    }
+
+    .saved-job-salary strong {
+        font-size: 1.1rem;
+    }
+
+    .saved-job-actions {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .saved-job-actions .btn {
+        width: 100%;
+    }
+
+    @media (max-width: 991.98px) {
+        .saved-job-row {
+            grid-template-columns: 1fr;
+        }
+
+        .saved-job-side {
+            padding-left: 0;
+            padding-top: 1rem;
+            border-left: 0;
+            border-top: 1px solid rgba(19, 34, 56, 0.14);
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .saved-job-row {
+            padding: 1.2rem;
+            border-radius: 18px;
+        }
+
+        .saved-job-head h4 {
+            font-size: 1.6rem;
+        }
+    }
+    </style>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">My Saved Jobs</h2>
+            <p class="text-muted mb-0">Keep track of roles you want to revisit before applying.</p>
+        </div>
+        <a href="{% url 'job_list' %}" class="btn btn-primary">Browse More Jobs</a>
+    </div>
+
+    <div class="saved-jobs-panel">
+        {% for saved_job in saved_jobs %}
+            <article class="saved-job-row">
+                <div class="saved-job-main">
+                    <div class="saved-job-head">
+                        <div>
+                            <h4 class="mb-1">{{ saved_job.job.title }}</h4>
+                            <p class="saved-job-company">{{ saved_job.job.company.name|default:saved_job.job.employer.username }}</p>
+                        </div>
+                        {% if saved_job.job.category %}
+                            <span class="dashboard-chip">{{ saved_job.job.category.name }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="saved-job-meta">
+                        <span>{{ saved_job.job.location }}</span>
+                        {% if saved_job.job.job_type %}
+                            <span>{{ saved_job.job.get_job_type_display }}</span>
+                        {% elif saved_job.job.employment_type %}
+                            <span>{{ saved_job.job.get_employment_type_display }}</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="saved-job-description">{{ saved_job.job.description|truncatewords:22 }}</p>
+                </div>
+
+                <div class="saved-job-side">
                     {% if saved_job.job.salary %}
-                        <p><strong>Salary:</strong> {{ saved_job.job.salary }}</p>
+                        <p class="saved-job-salary mb-0"><strong>Salary:</strong> {{ saved_job.job.salary }}</p>
                     {% endif %}
 
-                    <a href="{% url 'job_detail' saved_job.job.id %}" class="btn btn-primary">View Job</a>
-                    <a href="{% url 'unsave_job' saved_job.job.id %}" class="btn btn-danger">Remove</a>
+                    <div class="saved-job-actions">
+                        <a href="{% url 'job_detail' saved_job.job.id %}" class="btn btn-primary">View Job</a>
+                        <a href="{% url 'unsave_job' saved_job.job.id %}" class="btn btn-outline-danger">Remove</a>
+                    </div>
                 </div>
+            </article>
+        {% empty %}
+            <div class="dashboard-empty-state">
+                <h4 class="fw-bold">No saved jobs yet</h4>
+                <p class="text-muted mb-3">Save jobs you like and they will appear here.</p>
+                <a href="{% url 'job_list' %}" class="btn btn-primary">Explore Jobs</a>
             </div>
-        </div>
-    {% empty %}
-        <div class="col-12">
-            <div class="card shadow-sm empty-state-card">
-                <div class="card-body text-center py-5">
-                    <h4>No saved jobs yet</h4>
-                    <p class="text-muted">Save jobs you like and they will appear here.</p>
-                    <a href="{% url 'job_list' %}" class="btn btn-primary">Explore Jobs</a>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
 
-{% if page_obj.has_other_pages %}
-<nav>
-    <ul class="pagination justify-content-center mt-4">
-        {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-            </li>
-        {% endif %}
+    {% if page_obj.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
 
-        <li class="page-item active">
-            <span class="page-link">{{ page_obj.number }}</span>
-        </li>
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }}</span>
+                </li>
 
-        {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-            </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</section>
 {% endblock %}

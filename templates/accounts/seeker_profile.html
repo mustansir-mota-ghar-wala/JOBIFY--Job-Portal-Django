@@ -1,74 +1,216 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+<section class="profile-shell">
+    <style>
+    .seeker-profile-hero {
+        padding: 1.75rem 2rem;
+    }
+
+    .seeker-profile-grid {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr) auto;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .seeker-profile-avatar {
+        width: 200px;
+        height: 200px;
+        border-radius: 28px;
+        object-fit: cover;
+        display: block;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        box-shadow: 0 10px 25px rgba(19, 34, 56, 0.1);
+    }
+
+    .seeker-profile-avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0d6efd, #20c997);
+        color: #ffffff;
+        font-size: 3rem;
+        font-weight: 800;
+    }
+
+    .seeker-profile-card {
+        height: auto !important;
+    }
+
+    .seeker-profile-card .card-body {
+        padding: 2rem;
+    }
+
+    .seeker-profile-info {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .seeker-profile-info-row {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(19, 34, 56, 0.08);
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .seeker-profile-info-row span {
+        color: #5b6b7f;
+        font-weight: 600;
+    }
+
+    .seeker-profile-info-row strong,
+    .seeker-profile-info-value {
+        color: #132238;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        line-height: 1.65;
+    }
+
+    .seeker-profile-info-value {
+        font-size: 1.02rem;
+    }
+
+    .seeker-profile-info-row.is-long {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+        padding: 1.25rem 1.35rem;
+    }
+
+    .seeker-profile-info-row.is-long span {
+        margin-bottom: 0.1rem;
+    }
+
+    .seeker-profile-info-row.is-long .seeker-profile-info-value {
+        white-space: pre-line;
+        font-weight: 600;
+        line-height: 1.75;
+    }
+
+    .seeker-profile-side {
+        display: grid;
+        gap: 1.5rem;
+        align-content: start;
+    }
+
+    @media (max-width: 991.98px) {
+        .seeker-profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .seeker-profile-hero {
+            padding: 1.35rem;
+        }
+
+        .seeker-profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+        }
+
+        .seeker-profile-card .card-body {
+            padding: 1.35rem;
+        }
+
+        .seeker-profile-info-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <div class="profile-hero seeker-profile-hero mb-4">
+        <div class="seeker-profile-grid">
             <div>
-                <h2 class="fw-bold mb-1">
-                    {{ profile.full_name|default:profile.user.username }}
-                </h2>
-                <p class="text-muted mb-0">
-                    Username: {{ profile.user.username }}
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name|default:profile.user.username }}" class="seeker-profile-avatar">
+                {% else %}
+                    <div class="seeker-profile-avatar seeker-profile-avatar-placeholder">
+                        {{ profile.full_name|default:profile.user.username|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <span class="dashboard-kicker">Seeker profile</span>
+                <h1 class="profile-title mt-3 mb-2">{{ profile.full_name|default:profile.user.username }}</h1>
+                <p class="profile-subtitle mb-0">
+                    Username: {{ profile.user.username }}.
+                    Keep your profile complete so employers can quickly understand your background.
                 </p>
             </div>
 
-            <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">
-                Edit Profile
-            </a>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="text-center">
-                    {% if profile.profile_image %}
-                        <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
-                    {% else %}
-                        <div class="border rounded d-flex align-items-center justify-content-center bg-light text-muted mx-auto mb-3" style="width: 180px; height: 180px;">
-                            No Image
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="col-md-8">
-                <div class="mb-3">
-                    <h5 class="fw-semibold">Profile Information</h5>
-                    <hr>
-                </div>
-
-                <p>
-                    <strong>Full Name:</strong>
-                    {{ profile.full_name|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Skills:</strong>
-                    {{ profile.skills|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Education:</strong>
-                    {{ profile.education|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Experience:</strong>
-                    {{ profile.experience|default:"Not added yet" }}
-                </p>
-
-                <p>
-                    <strong>Resume:</strong>
-                    {% if profile.resume %}
-                        <a href="{{ profile.resume.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                            View Resume
-                        </a>
-                    {% else %}
-                        Not uploaded yet
-                    {% endif %}
-                </p>
+            <div>
+                <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">Edit Profile</a>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card dashboard-surface seeker-profile-card">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-4">Professional Snapshot</h4>
+
+                    <div class="seeker-profile-info">
+                        <div class="seeker-profile-info-row">
+                            <span>Full Name</span>
+                            <strong>{{ profile.full_name|default:"Not added yet" }}</strong>
+                        </div>
+                        <div class="seeker-profile-info-row is-long">
+                            <span>Skills</span>
+                            <div class="seeker-profile-info-value">{{ profile.skills|default:"Not added yet" }}</div>
+                        </div>
+                        <div class="seeker-profile-info-row">
+                            <span>Education</span>
+                            <strong>{{ profile.education|default:"Not added yet" }}</strong>
+                        </div>
+                        <div class="seeker-profile-info-row is-long">
+                            <span>Experience</span>
+                            <div class="seeker-profile-info-value">{{ profile.experience|default:"Not added yet" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="seeker-profile-side">
+                <div class="card dashboard-surface seeker-profile-card">
+                    <div class="card-body">
+                        <h4 class="fw-bold mb-3">Resume</h4>
+                        {% if profile.resume %}
+                            <p class="text-muted mb-3">Your latest resume is available for job applications.</p>
+                            <a href="{{ profile.resume.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary w-100">
+                                View Resume
+                            </a>
+                        {% else %}
+                            <div class="dashboard-empty-state compact-empty-state">
+                                <h5 class="fw-bold mb-2">No resume uploaded</h5>
+                                <p class="text-muted mb-3">Add a resume to apply faster and make your profile stronger.</p>
+                                <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">Upload Resume</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card dashboard-surface seeker-profile-card">
+                    <div class="card-body">
+                        <h4 class="fw-bold mb-3">Quick Actions</h4>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">Update Profile</a>
+                            <a href="{% url 'seeker_dashboard' %}" class="btn btn-outline-dark">Back to Dashboard</a>
+                            <a href="{% url 'job_list' %}" class="btn btn-outline-secondary">Browse Jobs</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

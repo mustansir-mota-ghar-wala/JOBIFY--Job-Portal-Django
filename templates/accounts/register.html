@@ -1,19 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="mb-4 text-center">Register</h2>
+<section class="auth-shell">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+            <div class="auth-panel auth-copy-panel">
+                <span class="dashboard-kicker">Create account</span>
+                <h1 class="auth-title mt-3 mb-3">Join Jobify and build your next opportunity faster.</h1>
+                <p class="auth-copy mb-4">
+                    Create a seeker or employer account and start managing your applications,
+                    openings, and profile from one polished workspace.
+                </p>
 
-                <form method="POST">
+                <div class="auth-role-grid">
+                    <div class="auth-role-card">
+                        <h5 class="fw-bold mb-2">For Seekers</h5>
+                        <p class="mb-0">Build a profile, save jobs, upload your resume, and track applications.</p>
+                    </div>
+                    <div class="auth-role-card">
+                        <h5 class="fw-bold mb-2">For Employers</h5>
+                        <p class="mb-0">Post openings, review applicants, and manage the hiring pipeline.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5 ms-lg-auto">
+            <div class="auth-panel">
+                <h2 class="mb-1 fw-bold">Register</h2>
+                <p class="text-muted mb-4">Fill in your details to get started.</p>
+
+                <form method="POST" novalidate class="stack-form">
                     {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
 
                     {% for field in form %}
                         <div class="mb-3">
                             <label class="form-label">{{ field.label }}</label>
                             {{ field }}
+                            {% if field.help_text and field.name == 'password1' %}
+                                <div class="form-text">Use at least 8 characters with a mix of letters and numbers.</div>
+                            {% endif %}
                             {% if field.errors %}
                                 <div class="text-danger small mt-1">
                                     {{ field.errors }}
@@ -25,12 +57,12 @@
                     <button type="submit" class="btn btn-primary w-100">Create Account</button>
                 </form>
 
-                <p class="mt-3 text-center">
+                <p class="mt-4 mb-0 text-center text-muted">
                     Already have an account?
-                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'login' %}" class="fw-semibold">Login</a>
                 </p>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

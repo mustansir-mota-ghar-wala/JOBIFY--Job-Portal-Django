@@ -1,231 +1,282 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+.seeker-dashboard-main,
+.seeker-dashboard-side {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+}
 
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-    <div>
-        <h2 class="fw-bold">Seeker Dashboard</h2>
-        <p class="text-muted mb-0">
-            Welcome back, {{ profile.full_name|default:request.user.username }}.
-        </p>
+.seeker-dashboard-main .dashboard-surface,
+.seeker-dashboard-side .dashboard-surface {
+    height: auto !important;
+}
+</style>
+<section class="dashboard-hero seeker-hero mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <span class="dashboard-kicker">Seeker workspace</span>
+            <h1 class="dashboard-title mt-3 mb-3">
+                Track progress, strengthen your profile, and stay ready for the next opportunity.
+            </h1>
+            <p class="dashboard-subtitle mb-0">
+                Welcome back, {{ profile.full_name|default:request.user.username }}.
+                You have {{ total_applications }} application{{ total_applications|pluralize }}
+                and a profile completion score of {{ profile_completion }}%.
+            </p>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-hero-panel">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <p class="text-uppercase small fw-semibold mb-2 text-secondary">Application response rate</p>
+                        <h2 class="fw-bold mb-1">{{ response_rate }}%</h2>
+                        <p class="text-muted mb-0">{{ response_count }} of {{ total_applications }} application{{ total_applications|pluralize }} updated</p>
+                    </div>
+                    <span class="dashboard-chip">{{ saved_jobs_count }} saved</span>
+                </div>
+
+                <div class="d-grid gap-2 d-sm-flex">
+                    <a href="{% url 'job_list' %}" class="btn btn-success flex-fill">Browse Jobs</a>
+                    <a href="{% url 'seeker_profile' %}" class="btn btn-outline-primary flex-fill">View Profile</a>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
-        <a href="{% url 'seeker_profile' %}" class="btn btn-outline-primary">View Profile</a>
-        <a href="{% url 'job_list' %}" class="btn btn-success">Browse Jobs</a>
-    </div>
-</div>
-
-
-<div class="row g-4 mb-4">
-
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+<section class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-primary h-100">
             <div class="card-body">
-                <h6 class="text-muted">Total Applications</h6>
-                <h2 class="fw-bold mb-1">{{ total_applications }}</h2>
-                <p class="text-muted mb-0">Jobs you have applied for</p>
+                <span class="dashboard-stat-label">Total Applications</span>
+                <h2 class="dashboard-stat-value">{{ total_applications }}</h2>
+                <p class="mb-0">All jobs you have applied for so far.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-success h-100">
             <div class="card-body">
-                <h6 class="text-muted">Shortlisted</h6>
-                <h2 class="fw-bold mb-1">{{ shortlisted_count }}</h2>
-                <p class="text-muted mb-0">Applications shortlisted</p>
+                <span class="dashboard-stat-label">Shortlisted</span>
+                <h2 class="dashboard-stat-value">{{ shortlisted_count }}</h2>
+                <p class="mb-0">Applications that moved into a strong next step.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-warning h-100">
             <div class="card-body">
-                <h6 class="text-muted">Reviewed</h6>
-                <h2 class="fw-bold mb-1">{{ reviewed_count }}</h2>
-                <p class="text-muted mb-0">Applications under progress</p>
+                <span class="dashboard-stat-label">In Review</span>
+                <h2 class="dashboard-stat-value">{{ pending_count|add:reviewed_count }}</h2>
+                <p class="mb-0">{{ pending_count }} pending and {{ reviewed_count }} reviewed.</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card dashboard-stat-card stat-dark h-100">
             <div class="card-body">
-                <h6 class="text-muted">Saved Jobs</h6>
-                <h2 class="fw-bold mb-1">{{ saved_jobs_count }}</h2>
-                <p class="text-muted mb-0">Jobs bookmarked by you</p>
+                <span class="dashboard-stat-label">Saved Jobs</span>
+                <h2 class="dashboard-stat-value">{{ saved_jobs_count }}</h2>
+                <p class="mb-0">Opportunities you bookmarked to revisit later.</p>
             </div>
         </div>
     </div>
+</section>
 
-</div>
-
-
-<div class="row g-4">
-
-    <!-- Recent Applications -->
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-semibold mb-0">Recent Applications</h5>
-                    <a href="{% url 'my_applications' %}" class="btn btn-sm btn-outline-dark">
-                        View All
-                    </a>
+<section class="row g-4">
+    <div class="col-xl-8">
+        <div class="seeker-dashboard-main">
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                    <div>
+                        <h4 class="fw-bold mb-1">Recent Applications</h4>
+                        <p class="text-muted mb-0">Latest activity across your submitted applications.</p>
+                    </div>
+                    <a href="{% url 'my_applications' %}" class="btn btn-sm btn-outline-dark">View All</a>
                 </div>
 
                 {% if recent_applications %}
+                    <div class="table-responsive">
+                        <table class="table dashboard-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Status</th>
+                                    <th>Applied On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for application in recent_applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold text-dark">{{ application.job.title }}</div>
+                                            <small class="text-muted">{{ application.job.location }}</small>
+                                        </td>
+                                        <td>
+                                            {% if application.status == 'pending' %}
+                                                <span class="badge text-bg-warning">Pending</span>
+                                            {% elif application.status == 'reviewed' %}
+                                                <span class="badge text-bg-info">Reviewed</span>
+                                            {% elif application.status == 'shortlisted' %}
+                                                <span class="badge text-bg-success">Shortlisted</span>
+                                            {% elif application.status == 'rejected' %}
+                                                <span class="badge text-bg-danger">Rejected</span>
+                                            {% else %}
+                                                <span class="badge text-bg-secondary">{{ application.get_status_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ application.applied_at|date:"d M Y" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="dashboard-empty-state">
+                        <h5 class="fw-bold mb-2">No applications yet</h5>
+                        <p class="text-muted mb-3">Start applying to build momentum and track responses here.</p>
+                        <a href="{% url 'job_list' %}" class="btn btn-success">Find Jobs</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-                <div class="table-responsive">
-                    <table class="table align-middle">
-
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                                <th>Status</th>
-                                <th>Applied On</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            {% for application in recent_applications %}
-
-                            <tr>
-                                <td>{{ application.job.title }}</td>
-
-                                <td>
-
-                                    {% if application.status == 'pending' %}
-                                        <span class="badge bg-warning text-dark">Pending</span>
-
-                                    {% elif application.status == 'reviewed' %}
-                                        <span class="badge bg-info">Reviewed</span>
-
-                                    {% elif application.status == 'shortlisted' %}
-                                        <span class="badge bg-success">Shortlisted</span>
-
-                                    {% elif application.status == 'rejected' %}
-                                        <span class="badge bg-danger">Rejected</span>
-
-                                    {% else %}
-                                        <span class="badge bg-secondary">
-                                            {{ application.get_status_display }}
-                                        </span>
-                                    {% endif %}
-
-                                </td>
-
-                                <td>
-                                    {{ application.applied_at|date:"d M Y" }}
-                                </td>
-
-                            </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                    <div>
+                        <h4 class="fw-bold mb-1">Saved Jobs</h4>
+                        <p class="text-muted mb-0">Keep an eye on the roles you marked for later.</p>
+                    </div>
+                    <a href="{% url 'saved_jobs' %}" class="btn btn-sm btn-outline-dark">Open Saved Jobs</a>
                 </div>
 
+                {% if recent_saved_jobs %}
+                    <div class="row g-3">
+                        {% for saved_job in recent_saved_jobs %}
+                            <div class="col-md-6">
+                                <div class="saved-job-card h-100">
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <div>
+                                            <h5 class="fw-semibold mb-1">{{ saved_job.job.title }}</h5>
+                                            <p class="text-muted mb-2">{{ saved_job.job.location }}</p>
+                                        </div>
+                                        <span class="dashboard-chip">{{ saved_job.job.get_employment_type_display }}</span>
+                                    </div>
+                                    <p class="small text-muted mb-3">
+                                        Saved on {{ saved_job.saved_at|date:"d M Y" }}
+                                    </p>
+                                    <a href="{% url 'job_detail' saved_job.job.id %}" class="btn btn-sm btn-outline-primary">View Job</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% else %}
-
-                <p class="text-muted mb-0">
-                    You have not applied to any job yet.
-                </p>
-
+                    <div class="dashboard-empty-state compact-empty-state">
+                        <h5 class="fw-bold mb-2">No saved jobs yet</h5>
+                        <p class="text-muted mb-0">Bookmark interesting roles so you can compare and apply later.</p>
+                    </div>
                 {% endif %}
-
             </div>
+        </div>
         </div>
     </div>
 
+    <div class="col-xl-4">
+        <div class="seeker-dashboard-side">
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Profile Completion</h4>
+                        <p class="text-muted mb-0">{{ completed_items }}/{{ completion_items|length }} essentials completed</p>
+                    </div>
+                    <span class="completion-score">{{ profile_completion }}%</span>
+                </div>
 
-    <!-- Right Side -->
-    <div class="col-lg-4">
-
-        <!-- Profile Completion -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-body">
-
-                <h5 class="fw-semibold mb-3">Profile Completion</h5>
-
-                <div class="progress mb-3" style="height:10px;">
-                    <div class="progress-bar"
-                         role="progressbar"
-                         aria-valuenow="{{ profile_completion|default:0 }}"
-                         aria-valuemin="0"
-                         aria-valuemax="100"
-                         data-width="{{ profile_completion|default:0 }}">
+                <div class="dashboard-progress mb-3">
+                    <div
+                        class="dashboard-progress-bar"
+                        role="progressbar"
+                        aria-valuenow="{{ profile_completion|default:0 }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        data-width="{{ profile_completion|default:0 }}">
                     </div>
                 </div>
 
-                <p class="mb-2">
-                    <strong>{{ profile_completion|default:0 }}%</strong> completed
-                </p>
-
-                <p class="text-muted mb-3">
-                    Complete your profile to improve your job application chances.
-                </p>
-
-                <a href="{% url 'edit_seeker_profile' %}"
-                   class="btn btn-outline-primary btn-sm">
-                   Complete Profile
-                </a>
-
-            </div>
-        </div>
-
-
-        <!-- Quick Actions -->
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-
-                <h5 class="fw-semibold mb-3">Quick Actions</h5>
-
-                <div class="d-grid gap-2">
-
-                    <a href="{% url 'job_list' %}" class="btn btn-success">
-                        Browse Jobs
-                    </a>
-
-                    <a href="{% url 'my_applications' %}" class="btn btn-primary">
-                        My Applications
-                    </a>
-
-                    <a href="{% url 'saved_jobs' %}" class="btn btn-dark">
-                        Saved Jobs
-                    </a>
-
-                    <a href="{% url 'edit_seeker_profile' %}"
-                       class="btn btn-outline-secondary">
-                       Edit Profile
-                    </a>
-
+                <div class="completion-checklist">
+                    {% for item in completion_items %}
+                        <div class="completion-item {% if item.completed %}is-complete{% endif %}">
+                            <div>
+                                <h6 class="mb-1">{{ item.label }}</h6>
+                                <p class="mb-0">{{ item.hint }}</p>
+                            </div>
+                            <span class="completion-pill">
+                                {% if item.completed %}Done{% else %}Pending{% endif %}
+                            </span>
+                        </div>
+                    {% endfor %}
                 </div>
 
+                <a href="{% url 'edit_seeker_profile' %}" class="btn btn-outline-primary w-100 mt-3">Update Profile</a>
             </div>
         </div>
 
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Status Breakdown</h4>
+                <div class="status-grid">
+                    <div class="status-box">
+                        <span>Pending</span>
+                        <strong>{{ pending_count }}</strong>
+                    </div>
+                    <div class="status-box">
+                        <span>Reviewed</span>
+                        <strong>{{ reviewed_count }}</strong>
+                    </div>
+                    <div class="status-box">
+                        <span>Shortlisted</span>
+                        <strong>{{ shortlisted_count }}</strong>
+                    </div>
+                    <div class="status-box">
+                        <span>Rejected</span>
+                        <strong>{{ rejected_count }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card dashboard-surface">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">Quick Actions</h4>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'job_list' %}" class="btn btn-success">Browse Jobs</a>
+                    <a href="{% url 'my_applications' %}" class="btn btn-primary">My Applications</a>
+                    <a href="{% url 'saved_jobs' %}" class="btn btn-dark">Saved Jobs</a>
+                    <a href="{% url 'edit_seeker_profile' %}" class="btn btn-outline-secondary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
-
-</div>
-
+</section>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
-    const bar = document.querySelector(".progress-bar[data-width]");
+    const bar = document.querySelector(".dashboard-progress-bar[data-width]");
 
     if (bar) {
         bar.style.width = bar.dataset.width + "%";
     }
-
 });
 </script>
-
-
 {% endblock %}
