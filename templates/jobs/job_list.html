@@ -55,10 +55,25 @@
 <div class="row g-4 mb-5">
     {% for job in jobs %}
         <div class="col-md-6">
-            <div class="card shadow-sm job-card">
+            <div class="card shadow-sm job-card h-100">
                 <div class="card-body">
-                    <h4>{{ job.title }}</h4>
-                    <p class="text-muted mb-2">{{ job.location }} | {{ job.get_job_type_display }}</p>
+                    <div class="d-flex align-items-center mb-3">
+                        {% if job.company and job.company.logo %}
+                            <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="rounded me-3" style="width: 55px; height: 55px; object-fit: cover;">
+                        {% endif %}
+
+                        <div>
+                            <h4 class="mb-1">{{ job.title }}</h4>
+                            <p class="text-muted mb-0">
+                                {{ job.company.name|default:job.employer.username }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mb-2">
+                        {{ job.location }}
+                        {% if job.job_type %} | {{ job.get_job_type_display }}{% endif %}
+                    </p>
 
                     {% if job.category %}
                         <p><strong>Category:</strong> {{ job.category.name }}</p>

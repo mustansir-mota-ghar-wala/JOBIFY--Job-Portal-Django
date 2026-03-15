@@ -11,6 +11,7 @@ urlpatterns = [
     path('employer/profile/', views.employer_profile_view, name='employer_profile'),
     path('employer/profile/edit/', views.edit_employer_profile, name='edit_employer_profile'),
 
+    path('seeker/dashboard/', views.seeker_dashboard, name='seeker_dashboard'),
     path('seeker/profile/', views.seeker_profile_view, name='seeker_profile'),
     path('seeker/profile/edit/', views.edit_seeker_profile, name='edit_seeker_profile'),
 ]

@@ -1,21 +1,76 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>{{ profile.user }}</h2>
-            <a href="{% url 'edit_employer_profile' %}" class="btn btn-primary">Edit Profile</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold mb-1">
+                    {{ company.name|default:profile.company_name }}
+                </h2>
+                <p class="text-muted mb-0">
+                    Employer Account: {{ profile.user.username }}
+                </p>
+            </div>
+
+            <a href="{% url 'edit_employer_profile' %}" class="btn btn-primary">
+                Edit Profile
+            </a>
         </div>
 
-        {% if profile.logo %}
-            <img src="{{ profile.logo.url }}" alt="Company Logo" class="img-thumbnail mb-3" width="150">
-        {% endif %}
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    {% if company and company.logo %}
+                        <img src="{{ company.logo.url }}" alt="Company Logo" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
+                    {% elif profile.logo %}
+                        <img src="{{ profile.logo.url }}" alt="Company Logo" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
+                    {% else %}
+                        <div class="border rounded d-flex align-items-center justify-content-center bg-light text-muted mx-auto mb-3" style="width: 180px; height: 180px;">
+                            No Logo
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-        <p><strong>Company Name:</strong> {{ profile.company_name }}</p>
-        <p><strong>Description:</strong> {{ profile.company_description|default:"Not added yet" }}</p>
-        <p><strong>Website:</strong> {{ profile.website|default:"Not added yet" }}</p>
-        <p><strong>Location:</strong> {{ profile.location|default:"Not added yet" }}</p>
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <h5 class="fw-semibold">Company Information</h5>
+                    <hr>
+                </div>
+
+                <p>
+                    <strong>Company Name:</strong>
+                    {{ company.name|default:profile.company_name }}
+                </p>
+
+                <p>
+                    <strong>Description:</strong>
+                    {{ company.description|default:profile.company_description|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Website:</strong>
+                    {% if company and company.website %}
+                        <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
+                    {% elif profile.website %}
+                        <a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a>
+                    {% else %}
+                        Not added yet
+                    {% endif %}
+                </p>
+
+                <p>
+                    <strong>Location:</strong>
+                    {{ company.location|default:profile.location|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Account Username:</strong>
+                    {{ profile.user.username }}
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

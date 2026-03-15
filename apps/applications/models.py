@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from apps.jobs.models import Job
-from cloudinary_storage.storage import RawMediaCloudinaryStorage
 
 
 class Application(models.Model):
@@ -25,10 +24,16 @@ class Application(models.Model):
     cover_letter = models.TextField(blank=True, null=True)
     resume = models.FileField(
         upload_to='application_resumes/',
-        storage=RawMediaCloudinaryStorage()
+        blank=False,
+        null=False
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
     applied_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-applied_at']

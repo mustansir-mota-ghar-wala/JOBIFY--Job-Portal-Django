@@ -1,29 +1,73 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h2>{{ job.title }}</h2>
-        <p class="text-muted">{{ job.location }} | {{ job.get_job_type_display }}</p>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center mb-4">
+            {% if job.company and job.company.logo %}
+                <img src="{{ job.company.logo.url }}" alt="{{ job.company.name }}" class="rounded me-3 border" style="width: 75px; height: 75px; object-fit: cover;">
+            {% else %}
+                <div class="rounded me-3 border bg-light d-flex align-items-center justify-content-center text-muted" style="width: 75px; height: 75px;">
+                    <small>Logo</small>
+                </div>
+            {% endif %}
 
-        {% if job.category %}
-            <p><strong>Category:</strong> {{ job.category.name }}</p>
+            <div>
+                <h2 class="mb-1">{{ job.title }}</h2>
+                <p class="text-muted mb-0">
+                    {{ job.company.name|default:job.employer.username }}
+                </p>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p class="mb-2"><strong>Location:</strong> {{ job.location }}</p>
+
+                {% if job.job_type %}
+                    <p class="mb-2"><strong>Job Type:</strong> {{ job.get_job_type_display }}</p>
+                {% endif %}
+
+                {% if job.category %}
+                    <p class="mb-2"><strong>Category:</strong> {{ job.category.name }}</p>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6">
+                {% if job.salary %}
+                    <p class="mb-2"><strong>Salary:</strong> {{ job.salary }}</p>
+                {% endif %}
+
+                {% if job.deadline %}
+                    <p class="mb-2"><strong>Deadline:</strong> {{ job.deadline }}</p>
+                {% endif %}
+
+                <p class="mb-2">
+                    <strong>Posted by:</strong> {{ job.company.name|default:job.employer.username }}
+                </p>
+            </div>
+        </div>
+
+        {% if job.company and job.company.website %}
+            <p class="mb-2">
+                <strong>Company Website:</strong>
+                <a href="{{ job.company.website }}" target="_blank">{{ job.company.website }}</a>
+            </p>
         {% endif %}
 
-        {% if job.salary %}
-            <p><strong>Salary:</strong> {{ job.salary }}</p>
+        {% if job.company and job.company.location %}
+            <p class="mb-3">
+                <strong>Company Location:</strong> {{ job.company.location }}
+            </p>
         {% endif %}
 
-        {% if job.deadline %}
-            <p><strong>Deadline:</strong> {{ job.deadline }}</p>
-        {% endif %}
-
-        <p><strong>Posted by:</strong> {{ job.employer.username }}</p>
         <hr>
+
+        <h5 class="fw-semibold mb-3">Job Description</h5>
         <p>{{ job.description }}</p>
 
         {% if user.is_authenticated and user.role == 'seeker' %}
-            <div class="mt-3">
+            <div class="mt-4 d-flex flex-wrap gap-2">
                 {% if has_applied %}
                     <button class="btn btn-secondary" disabled>Already Applied</button>
                 {% else %}
@@ -38,7 +82,7 @@
             </div>
         {% endif %}
 
-        <div class="mt-3">
+        <div class="mt-4">
             <a href="{% url 'job_list' %}" class="btn btn-secondary">Back to Jobs</a>
         </div>
     </div>

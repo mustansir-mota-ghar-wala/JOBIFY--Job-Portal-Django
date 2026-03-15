@@ -4,13 +4,14 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 
+from apps.accounts.models import Company
 from apps.applications.models import Application
 from .forms import JobForm
 from .models import Job, Category, SavedJob
 
 
 def job_list(request):
-    jobs = Job.objects.filter(is_active=True)
+    jobs = Job.objects.filter(is_active=True).select_related('company', 'category', 'employer')
     categories = Category.objects.all()
 
     keyword = request.GET.get('keyword', '')
@@ -52,7 +53,11 @@ def job_list(request):
 
 
 def job_detail(request, id):
-    job = get_object_or_404(Job, id=id, is_active=True)
+    job = get_object_or_404(
+        Job.objects.select_related('company', 'category', 'employer'),
+        id=id,
+        is_active=True
+    )
 
     has_applied = False
     is_saved = False
@@ -80,7 +85,17 @@ def create_job(request):
         if form.is_valid():
             job = form.save(commit=False)
             job.employer = request.user
+
+            company = request.user.companies.first()
+            if not company:
+                company = Company.objects.create(
+                    name=request.user.username,
+                    created_by=request.user
+                )
+
+            job.company = company
             job.save()
+
             messages.success(request, 'Job posted successfully.')
             return redirect('employer_job_list')
     else:
@@ -96,13 +111,16 @@ def employer_job_list(request):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    jobs = Job.objects.filter(employer=request.user)
+    jobs = Job.objects.filter(employer=request.user).select_related('company', 'category').order_by('-created_at')
 
     paginator = Paginator(jobs, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    context = {'jobs': page_obj, 'page_obj': page_obj}
+    context = {
+        'jobs': page_obj,
+        'page_obj': page_obj,
+    }
     return render(request, 'jobs/employer_job_list.html', context)
 
 
@@ -112,12 +130,27 @@ def edit_job(request, id):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    job = get_object_or_404(Job, id=id, employer=request.user)
+    job = get_object_or_404(
+        Job.objects.select_related('company', 'category'),
+        id=id,
+        employer=request.user
+    )
 
     if request.method == 'POST':
         form = JobForm(request.POST, instance=job)
         if form.is_valid():
-            form.save()
+            updated_job = form.save(commit=False)
+
+            if not updated_job.company:
+                company = request.user.companies.first()
+                if not company:
+                    company = Company.objects.create(
+                        name=request.user.username,
+                        created_by=request.user
+                    )
+                updated_job.company = company
+
+            updated_job.save()
             messages.success(request, 'Job updated successfully.')
             return redirect('employer_job_list')
     else:
@@ -185,11 +218,14 @@ def saved_jobs(request):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    saved_jobs = SavedJob.objects.filter(user=request.user)
+    saved_jobs_qs = SavedJob.objects.filter(user=request.user).select_related('job', 'job__company', 'job__category')
 
-    paginator = Paginator(saved_jobs, 6)
+    paginator = Paginator(saved_jobs_qs, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    context = {'saved_jobs': page_obj, 'page_obj': page_obj}
+    context = {
+        'saved_jobs': page_obj,
+        'page_obj': page_obj,
+    }
     return render(request, 'jobs/saved_jobs.html', context)

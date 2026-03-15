@@ -16,7 +16,11 @@ def apply_job(request, job_id):
         messages.error(request, 'Only job seekers can apply for jobs.')
         return redirect('job_detail', id=job_id)
 
-    job = get_object_or_404(Job, id=job_id, is_active=True)
+    job = get_object_or_404(
+        Job.objects.select_related('employer', 'company', 'category'),
+        id=job_id,
+        is_active=True
+    )
 
     already_applied = Application.objects.filter(job=job, applicant=request.user).exists()
     if already_applied:
@@ -65,7 +69,10 @@ def apply_job(request, job_id):
     else:
         form = ApplicationForm()
 
-    context = {'form': form, 'job': job}
+    context = {
+        'form': form,
+        'job': job,
+    }
     return render(request, 'applications/apply_job.html', context)
 
 
@@ -75,13 +82,21 @@ def my_applications(request):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    applications = Application.objects.filter(applicant=request.user)
+    applications = (
+        Application.objects
+        .filter(applicant=request.user)
+        .select_related('job', 'job__company', 'job__category')
+        .order_by('-applied_at')
+    )
 
     paginator = Paginator(applications, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    context = {'applications': page_obj, 'page_obj': page_obj}
+    context = {
+        'applications': page_obj,
+        'page_obj': page_obj,
+    }
     return render(request, 'applications/my_applications.html', context)
 
 
@@ -91,13 +106,21 @@ def employer_applications(request):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    applications = Application.objects.filter(job__employer=request.user)
+    applications = (
+        Application.objects
+        .filter(job__employer=request.user)
+        .select_related('job', 'job__company', 'applicant')
+        .order_by('-applied_at')
+    )
 
     paginator = Paginator(applications, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    context = {'applications': page_obj, 'page_obj': page_obj}
+    context = {
+        'applications': page_obj,
+        'page_obj': page_obj,
+    }
     return render(request, 'applications/employer_applications.html', context)
 
 
@@ -107,7 +130,11 @@ def update_application_status(request, id):
         messages.error(request, 'Access denied.')
         return redirect('home')
 
-    application = get_object_or_404(Application, id=id, job__employer=request.user)
+    application = get_object_or_404(
+        Application.objects.select_related('job', 'job__company', 'applicant'),
+        id=id,
+        job__employer=request.user
+    )
 
     if request.method == 'POST':
         form = ApplicationStatusForm(request.POST, instance=application)
@@ -133,5 +160,8 @@ def update_application_status(request, id):
     else:
         form = ApplicationStatusForm(instance=application)
 
-    context = {'form': form, 'application': application}
+    context = {
+        'form': form,
+        'application': application,
+    }
     return render(request, 'applications/update_application_status.html', context)

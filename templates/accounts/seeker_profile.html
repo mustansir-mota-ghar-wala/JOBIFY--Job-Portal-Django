@@ -1,30 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>{{ profile.user }}</h2>
-            <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">Edit Profile</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h2 class="fw-bold mb-1">
+                    {{ profile.full_name|default:profile.user.username }}
+                </h2>
+                <p class="text-muted mb-0">
+                    Username: {{ profile.user.username }}
+                </p>
+            </div>
+
+            <a href="{% url 'edit_seeker_profile' %}" class="btn btn-primary">
+                Edit Profile
+            </a>
         </div>
 
-        {% if profile.profile_image %}
-            <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="img-thumbnail mb-3" width="150">
-        {% endif %}
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    {% if profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="img-thumbnail rounded shadow-sm mb-3" style="width: 180px; height: 180px; object-fit: cover;">
+                    {% else %}
+                        <div class="border rounded d-flex align-items-center justify-content-center bg-light text-muted mx-auto mb-3" style="width: 180px; height: 180px;">
+                            No Image
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-        <p><strong>Full Name:</strong> {{ profile.full_name }}</p>
-        <p><strong>Skills:</strong> {{ profile.skills|default:"Not added yet" }}</p>
-        <p><strong>Education:</strong> {{ profile.education|default:"Not added yet" }}</p>
-        <p><strong>Experience:</strong> {{ profile.experience|default:"Not added yet" }}</p>
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <h5 class="fw-semibold">Profile Information</h5>
+                    <hr>
+                </div>
 
-        <p>
-            <strong>Resume:</strong>
-            {% if profile.resume %}
-                <a href="{{ profile.resume.url }}" target="_blank">View Resume</a>
-            {% else %}
-                Not uploaded yet
-            {% endif %}
-        </p>
+                <p>
+                    <strong>Full Name:</strong>
+                    {{ profile.full_name|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Skills:</strong>
+                    {{ profile.skills|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Education:</strong>
+                    {{ profile.education|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Experience:</strong>
+                    {{ profile.experience|default:"Not added yet" }}
+                </p>
+
+                <p>
+                    <strong>Resume:</strong>
+                    {% if profile.resume %}
+                        <a href="{{ profile.resume.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            View Resume
+                        </a>
+                    {% else %}
+                        Not uploaded yet
+                    {% endif %}
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
