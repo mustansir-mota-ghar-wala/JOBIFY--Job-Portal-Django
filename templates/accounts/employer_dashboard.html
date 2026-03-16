@@ -74,6 +74,18 @@
     overflow-wrap: anywhere;
 }
 
+.employer-dashboard-main,
+.employer-dashboard-side {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+}
+
+.employer-dashboard-main .dashboard-surface,
+.employer-dashboard-side .dashboard-surface {
+    height: auto !important;
+}
+
 @media (max-width: 767.98px) {
     .dashboard-company-media,
     .dashboard-company-detail {
@@ -164,115 +176,119 @@
 
 <section class="row g-4">
     <div class="col-xl-8">
-        <div class="card dashboard-surface h-100">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-                    <div>
-                        <h4 class="fw-bold mb-1">Recent Jobs</h4>
-                        <p class="text-muted mb-0">Quick view of your latest published and managed roles.</p>
+        <div class="employer-dashboard-main">
+            <div class="card dashboard-surface">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-1">Recent Jobs</h4>
+                            <p class="text-muted mb-0">Quick view of your latest published and managed roles.</p>
+                        </div>
+                        <a href="{% url 'employer_job_list' %}" class="btn btn-sm btn-outline-dark">Manage Jobs</a>
                     </div>
-                    <a href="{% url 'employer_job_list' %}" class="btn btn-sm btn-outline-dark">Manage Jobs</a>
-                </div>
 
-                {% if recent_jobs %}
-                    <div class="table-responsive">
-                        <table class="table dashboard-table align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Job Title</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Posted On</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for job in recent_jobs %}
+                    {% if recent_jobs %}
+                        <div class="table-responsive">
+                            <table class="table dashboard-table align-middle mb-0">
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <div class="fw-semibold text-dark">{{ job.title }}</div>
-                                            {% if job.category %}
-                                                <small class="text-muted">{{ job.category.name }}</small>
-                                            {% else %}
-                                                <small class="text-muted">{{ job.get_employment_type_display }}</small>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ job.location }}</td>
-                                        <td>
-                                            {% if job.is_active %}
-                                                <span class="badge text-bg-success">Active</span>
-                                            {% else %}
-                                                <span class="badge text-bg-secondary">Inactive</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ job.created_at|date:"d M Y" }}</td>
+                                        <th>Job Title</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Posted On</th>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="dashboard-empty-state">
-                        <h5 class="fw-bold mb-2">No jobs posted yet</h5>
-                        <p class="text-muted mb-3">Create your first listing to start attracting applicants.</p>
-                        <a href="{% url 'create_job' %}" class="btn btn-success">Post Your First Job</a>
-                    </div>
-                {% endif %}
+                                </thead>
+                                <tbody>
+                                    {% for job in recent_jobs %}
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold text-dark">{{ job.title }}</div>
+                                                {% if job.category %}
+                                                    <small class="text-muted">{{ job.category.name }}</small>
+                                                {% else %}
+                                                    <small class="text-muted">{{ job.get_employment_type_display }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ job.location }}</td>
+                                            <td>
+                                                {% if job.is_active %}
+                                                    <span class="badge text-bg-success">Active</span>
+                                                {% else %}
+                                                    <span class="badge text-bg-secondary">Inactive</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ job.created_at|date:"d M Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="dashboard-empty-state">
+                            <h5 class="fw-bold mb-2">No jobs posted yet</h5>
+                            <p class="text-muted mb-3">Create your first listing to start attracting applicants.</p>
+                            <a href="{% url 'create_job' %}" class="btn btn-success">Post Your First Job</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-4">
-        <div class="card dashboard-surface mb-4">
-            <div class="card-body p-4">
-                <h4 class="fw-bold mb-3">Company Overview</h4>
+        <div class="employer-dashboard-side">
+            <div class="card dashboard-surface">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">Company Overview</h4>
 
-                <div class="dashboard-company-card">
-                <div class="dashboard-company-media">
-                    {% if company and company.logo %}
-                        <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="dashboard-company-logo">
-                    {% elif profile.logo %}
-                        <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" class="dashboard-company-logo">
-                    {% else %}
-                        <div class="dashboard-company-logo dashboard-company-logo-placeholder">
-                            {{ company.name|default:profile.company_name|default:request.user.username|slice:":1"|upper }}
-                        </div>
-                    {% endif %}
-
-                    <div class="dashboard-company-copy">
-                        <h5 class="fw-semibold mb-1">{{ company.name|default:profile.company_name }}</h5>
-                        <p class="text-muted mb-0">{{ company.location|default:profile.location|default:"Location not added yet" }}</p>
-                    </div>
-                </div>
-
-                    <div class="dashboard-company-detail">
-                        <span>Website</span>
-                        {% if company and company.website %}
-                            <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
-                        {% elif profile.website %}
-                            <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                    <div class="dashboard-company-card">
+                    <div class="dashboard-company-media">
+                        {% if company and company.logo %}
+                            <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="dashboard-company-logo">
+                        {% elif profile.logo %}
+                            <img src="{{ profile.logo.url }}" alt="{{ profile.company_name }}" class="dashboard-company-logo">
                         {% else %}
-                            <strong>Not added</strong>
+                            <div class="dashboard-company-logo dashboard-company-logo-placeholder">
+                                {{ company.name|default:profile.company_name|default:request.user.username|slice:":1"|upper }}
+                            </div>
                         {% endif %}
+
+                        <div class="dashboard-company-copy">
+                            <h5 class="fw-semibold mb-1">{{ company.name|default:profile.company_name }}</h5>
+                            <p class="text-muted mb-0">{{ company.location|default:profile.location|default:"Location not added yet" }}</p>
+                        </div>
                     </div>
 
-                    <div class="dashboard-company-detail">
-                        <span>Company name</span>
-                        <strong>{{ company.name|default:profile.company_name }}</strong>
+                        <div class="dashboard-company-detail">
+                            <span>Website</span>
+                            {% if company and company.website %}
+                                <a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                            {% elif profile.website %}
+                                <a href="{{ profile.website }}" target="_blank" rel="noopener noreferrer">Visit site</a>
+                            {% else %}
+                                <strong>Not added</strong>
+                            {% endif %}
+                        </div>
+
+                        <div class="dashboard-company-detail">
+                            <span>Company name</span>
+                            <strong>{{ company.name|default:profile.company_name }}</strong>
+                        </div>
                     </div>
+
+                    <a href="{% url 'edit_employer_profile' %}" class="btn btn-outline-primary w-100 mt-3">Edit Company Profile</a>
                 </div>
-
-                <a href="{% url 'edit_employer_profile' %}" class="btn btn-outline-primary w-100 mt-3">Edit Company Profile</a>
             </div>
-        </div>
 
-        <div class="card dashboard-surface">
-            <div class="card-body p-4">
-                <h4 class="fw-bold mb-3">Quick Actions</h4>
-                <div class="d-grid gap-2">
-                    <a href="{% url 'create_job' %}" class="btn btn-success">Post New Job</a>
-                    <a href="{% url 'employer_job_list' %}" class="btn btn-dark">Manage My Jobs</a>
-                    <a href="{% url 'employer_applications' %}" class="btn btn-primary">View Applicants</a>
-                    <a href="{% url 'employer_profile' %}" class="btn btn-outline-secondary">View Company Profile</a>
+            <div class="card dashboard-surface">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3">Quick Actions</h4>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'create_job' %}" class="btn btn-success">Post New Job</a>
+                        <a href="{% url 'employer_job_list' %}" class="btn btn-dark">Manage My Jobs</a>
+                        <a href="{% url 'employer_applications' %}" class="btn btn-primary">View Applicants</a>
+                        <a href="{% url 'employer_profile' %}" class="btn btn-outline-secondary">View Company Profile</a>
+                    </div>
                 </div>
             </div>
         </div>
