@@ -11,7 +11,11 @@ from .models import Job, Category, SavedJob
 
 
 def job_list(request):
-    jobs = Job.objects.filter(is_active=True).select_related('company', 'category', 'employer')
+    jobs = (
+        Job.objects
+        .filter(is_active=True, status='published')
+        .select_related('company', 'category', 'employer')
+    )
     categories = Category.objects.all()
 
     keyword = request.GET.get('keyword', '')
@@ -56,7 +60,8 @@ def job_detail(request, id):
     job = get_object_or_404(
         Job.objects.select_related('company', 'category', 'employer'),
         id=id,
-        is_active=True
+        is_active=True,
+        status='published',
     )
 
     has_applied = False

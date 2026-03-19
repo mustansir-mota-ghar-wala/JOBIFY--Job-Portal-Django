@@ -9,6 +9,14 @@ except ImportError:  # pragma: no cover - local fallback when optional dependenc
     cloudinary_storage = None
 
 
+USE_CLOUDINARY_RAW_STORAGE = bool(
+    cloudinary_storage
+    and settings.CLOUDINARY_STORAGE.get('CLOUD_NAME')
+    and settings.CLOUDINARY_STORAGE.get('API_KEY')
+    and settings.CLOUDINARY_STORAGE.get('API_SECRET')
+)
+
+
 class Application(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pending'),
@@ -31,7 +39,7 @@ class Application(models.Model):
     resume = models.FileField(
         storage=(
             cloudinary_storage.storage.RawMediaCloudinaryStorage()
-            if cloudinary_storage
+            if USE_CLOUDINARY_RAW_STORAGE
             else FileSystemStorage()
         ),
         upload_to='application_resumes/',

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import sys
 
 try:
     import dj_database_url
@@ -23,11 +24,11 @@ except ImportError:  # pragma: no cover - local fallback when optional dependenc
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+IS_TEST = 'test' in sys.argv
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-dev-key")
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-#DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", ".onrender.com"]
 
 INSTALLED_APPS = [
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'rest_framework',
 
     # Local apps
     'apps.accounts',
@@ -138,7 +141,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-if DEBUG or not cloudinary:
+if DEBUG or IS_TEST or not cloudinary:
     STORAGES = {
         "default": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -156,3 +159,15 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
+}

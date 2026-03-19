@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -6,6 +7,14 @@ try:
     import cloudinary_storage.storage
 except ImportError:  # pragma: no cover - local fallback when optional dependency is missing
     cloudinary_storage = None
+
+
+USE_CLOUDINARY_RAW_STORAGE = bool(
+    cloudinary_storage
+    and settings.CLOUDINARY_STORAGE.get('CLOUD_NAME')
+    and settings.CLOUDINARY_STORAGE.get('API_KEY')
+    and settings.CLOUDINARY_STORAGE.get('API_SECRET')
+)
 
 
 class CustomUser(AbstractUser):
@@ -57,7 +66,7 @@ class SeekerProfile(models.Model):
     resume = models.FileField(
         storage=(
             cloudinary_storage.storage.RawMediaCloudinaryStorage()
-            if cloudinary_storage
+            if USE_CLOUDINARY_RAW_STORAGE
             else FileSystemStorage()
         ),
         upload_to='resumes/',
